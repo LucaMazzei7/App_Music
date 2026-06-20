@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../provider/menu_provider.dart';
+
 class Home_page extends StatefulWidget {
   const Home_page({super.key, required this.title});
-  
+
   final String title;
 
   @override
@@ -18,7 +19,7 @@ class _MyHomePageState extends State<Home_page> {
     );
   }
 
-Widget _lista() {
+  Widget _lista() {
     return FutureBuilder(
       future: menuProvider.cargarData(),
       initialData: const [],
@@ -49,16 +50,16 @@ Widget _lista() {
     return data
         .map(
           (opt) => ListTile(
-            title: Text(opt['texto']),
-            leading: Icon(Icons.access_time_sharp, color: const Color.fromARGB(255, 100, 165, 25)),
+            title: Text(opt['texto'], textAlign: TextAlign.center),
             trailing: Icon(
               Icons.arrow_forward_ios_outlined,
               color: Colors.blue,
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, opt['ruta']);
+            },
           ),
         )
         .toList();
   }
 }
-

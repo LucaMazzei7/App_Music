@@ -1,3 +1,5 @@
 .dart_tool/
 build/
 android/.gradle/
+ios/Flutter/ephemeral/
+macos/Flutter/ephemeral/

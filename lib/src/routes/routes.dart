@@ -4,7 +4,6 @@ import '../pages/home_page.dart';
 import '../pages/song.dart';
 import '../pages/iniciar_sesion.dart';
 
-
 // Función pura que retorna el mapa de rutas configurado
 Map<String, WidgetBuilder> getApplicationRoutes() {
   return <String, WidgetBuilder>{
