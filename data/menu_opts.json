@@ -1,0 +1,17 @@
+{
+    "nombreApp" : "APP_MUSIC",
+    "rutas" : [
+        {
+            "ruta" : "playlist",
+            "texto": "playlist"
+        },
+        {
+            "ruta" : "song",
+            "texto": "song"
+        }
+             
+
+    ]
+}
+
+
