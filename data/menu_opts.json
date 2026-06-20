@@ -2,14 +2,16 @@
     "nombreApp" : "APP_MUSIC",
     "rutas" : [
         {
-            "ruta" : "playlist",
-            "texto": "playlist"
+            "ruta" : "Crear_playlist",
+            "icono": "agregar_p",
+            "texto": "Crear Playlist"
         },
         {
-            "ruta" : "song",
-            "texto": "song"
+            "ruta" : "Fav",
+            "icono": "song_icon",
+            "texto": "Favoritos"
         }
-             
+
 
     ]
 }

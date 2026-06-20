@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/services.dart' show rootBundle;
 
 //Se genera de manera privada la clase
