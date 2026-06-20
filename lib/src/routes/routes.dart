@@ -9,7 +9,7 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
   return <String, WidgetBuilder>{
     '/':      (BuildContext context) => const InicioSesion(title: 'Iniciar sesión',),
     'home':   (BuildContext context) => const Home_page(title: 'Pagina de inicio',),
-    'playlist':  (BuildContext context) => const Playlist(),
-    'song': (BuildContext context) => const Songs(),
+    'Playlist':  (BuildContext context) => const Playlist(),
+    'Favoritos': (BuildContext context) => const Songs(),
   };
 }
