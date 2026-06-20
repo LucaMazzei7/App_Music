@@ -2,7 +2,7 @@
     "nombreApp" : "APP_MUSIC",
     "rutas" : [
         {
-            "ruta" : "Crear_playlist",
+            "ruta" : "Inicio_sesion",
             "icono": "agregar_p",
             "texto": "Crear Playlist"
         },
