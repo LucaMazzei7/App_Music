@@ -104,7 +104,7 @@ Widget _crearInput() {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
         hintText: 'Password',
         labelText: 'Password',
-        suffixIcon: Icon(Icons.remove_red_eye),
+        suffixIcon: Icon(Icons.lock_open),
         icon: Icon(Icons.lock),
       ),
       onChanged: (valor) {
