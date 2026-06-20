@@ -1,23 +1,44 @@
 import 'package:flutter/material.dart';
 
-class Inicio_sesion extends StatefulWidget {
-  const Inicio_sesion({super.key,required this.title});
+class InicioSesion extends StatefulWidget {
+  const InicioSesion({super.key,required this.title});
   final String title;
   @override
-  State<Inicio_sesion> createState() => IniciarSesion();
+  State<InicioSesion> createState() => IniciarSesion();
+  
+
+
 }
 
 
-class IniciarSesion extends State<Inicio_sesion> {
+class IniciarSesion extends State<InicioSesion> {
   String _nombre = '';
   String _email = '';
+  final TextEditingController _IniciarSesion = TextEditingController();
+  
+  @override
+  void initState() {
+    super.initState();
+    _IniciarSesion.text = 'Valor inicial del input';
+    _IniciarSesion.addListener(() {
+    print('El valor del input es: ${_IniciarSesion.text}');
+    });
+  }
+
+  // Destrucción obligatoria para liberar memoria RAM
+  @override
+  void dispose() {
+    _IniciarSesion.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Inputs')),
+      appBar: AppBar(title: Text('Iniciar sesion')),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         children: [
           _crearInput(),
           Divider(),
@@ -26,6 +47,8 @@ class IniciarSesion extends State<Inicio_sesion> {
           _crearPassword(),
           Divider(),
           _crearPersona(),
+          Divider(),
+          _crearBoton(),
         ],
       ),
     );
@@ -34,8 +57,8 @@ Widget _crearInput() {
     return TextField(
       textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
+        iconColor:  const Color.fromARGB(255, 100, 165, 25),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-        counter: Text('Letras ${_nombre.length}'),
         hintText: 'Nombre de la persona',
         labelText: 'Nombre',
         helperText: 'Solo nombre',
@@ -56,6 +79,7 @@ Widget _crearInput() {
       //keyboardType permite que en el teclado del dispositivo móvil se encuentre accesible el arroba (@) con el fin de escribir las direcciones de correo con mayor facilidad
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
+        iconColor:  const Color.fromARGB(255, 100, 165, 25),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
         hintText: 'Email',
         labelText: 'Email',
@@ -76,10 +100,11 @@ Widget _crearInput() {
       //obscureText permite ocultar los caracteres que se ingresan en un input reemplazandolos por asteriscos
       obscureText: true,
       decoration: InputDecoration(
+        iconColor:  const Color.fromARGB(255, 100, 165, 25),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
         hintText: 'Password',
         labelText: 'Password',
-        suffixIcon: Icon(Icons.lock_open),
+        suffixIcon: Icon(Icons.remove_red_eye),
         icon: Icon(Icons.lock),
       ),
       onChanged: (valor) {
@@ -93,6 +118,12 @@ Widget _crearInput() {
       subtitle: Text('Email: $_email'),
     );
   }
+  Widget _crearBoton() {
+    return ElevatedButton(
+    onPressed: () {
+      Navigator.pushNamed(context, 'home');
+    },
+    child: const Text('Iniciar sesión'),
+  );
 }
-
-
+}
