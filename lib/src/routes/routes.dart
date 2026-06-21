@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-import '../pages/playlist.dart';
+import '../pages/search.dart';
 import '../pages/home_page.dart';
-import '../pages/song.dart';
+import '../pages/favoritos.dart';
 import '../pages/iniciar_sesion.dart';
+import '../pages/playlist.dart';
+import '../pages/navigation_page.dart';
 
-// Función pura que retorna el mapa de rutas configurado
+// Función que retorna el mapa de rutas configurado
 Map<String, WidgetBuilder> getApplicationRoutes() {
   return <String, WidgetBuilder>{
-    '/':      (BuildContext context) => const InicioSesion(title: 'Iniciar sesión',),
-    'home':   (BuildContext context) => const Home_page(title: 'Pagina de inicio',),
-    'Playlist':  (BuildContext context) => const Playlist(),
-    'Favoritos': (BuildContext context) => const Songs(),
+    // La ruta raíz '/' ahora pasa a ser la NavigationPage
+    '/': (BuildContext context) => const NavigationPage(),
+    
+    // Mantenemos las rutas a las páginas individuales para acceso directo
+    'Login':     (BuildContext context) => const InicioSesion(title: 'Iniciar sesión'),
+    'Home':      (BuildContext context) => const Home_page(title: 'Pagina de inicio'),
+    'Search':    (BuildContext context) => const Search(),
+    'Playlist':  (BuildContext context) => const Playlist(), 
+    'Favoritos': (BuildContext context) => const Favoritos(),
   };
 }
