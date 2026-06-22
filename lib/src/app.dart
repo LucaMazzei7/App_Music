@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'provider/favoritos_provider.dart';
 import 'provider/playlist_provider.dart';
 import 'routes/routes.dart';
+import 'provider/ver_playlist_provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => FavoritosProvider()),
         ChangeNotifierProvider(create: (context) => PlaylistProvider()),
+        ChangeNotifierProvider(create: (_) => ReproductorProvider(),),
       ],
       child: MaterialApp(
         title: 'Music App',

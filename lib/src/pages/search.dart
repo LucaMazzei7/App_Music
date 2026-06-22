@@ -1,9 +1,9 @@
 // lib/src/pages/search.dart
 import 'package:flutter/material.dart';
 import '../mock_data.dart'; 
-import 'package:provider/provider.dart'; 
-import '../provider/favoritos_provider.dart';
-import '../provider/playlist_provider.dart';
+import '../provider/ver_playlist_provider.dart';
+import '../widgets/opciones_cancion.dart';
+import 'package:provider/provider.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -36,123 +36,6 @@ class _SearchState extends State<Search> {
             .toList();
       }
     });
-  }
-
-  // Función simulada para el menú de opciones (Favoritos / Playlist)
-  void _mostrarOpciones(BuildContext context, Map<String, String> cancion) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF282828),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.network(
-                      cancion['image']!,
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: 40, 
-                          height: 40,
-                          color: Colors.grey[800],
-                          child: const Icon(Icons.music_note, color: Colors.white24),
-                        );
-                      },
-                    ),
-                  ),
-                title: Text(cancion['title']!, style: const TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255))),
-                subtitle: Text(cancion['artist']!, style: const TextStyle(color: Colors.grey)),
-              ),
-              const Divider(color: Colors.white10),
-              ListTile(
-                leading: Icon(
-                  Provider.of<FavoritosProvider>(context, listen: false).esFavorito(cancion['id']!)
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color:Theme.of(context).colorScheme.primary,
-                ),
-                title: const Text('Añadir a Favoritos'),
-                onTap: () {
-                  Navigator.pop(context);
-                  
-                  // LLAMADA REAL AL PROVIDER:
-                  Provider.of<FavoritosProvider>(context, listen: false).agregarAFavoritos(cancion);
-                  
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('"${cancion['title']}" añadida a Favoritos')),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.playlist_add, color: Colors.white),
-                title: const Text('Añadir a una Playlist'),
-                onTap: () {
-                  Navigator.pop(context); // Cierra el primer menú
-                  
-                  final pProvider = Provider.of<PlaylistProvider>(context, listen: false);
-                  
-                  if (pProvider.playlists.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Primero debés crear una playlist en la Home.')),
-                    );
-                    return;
-                  }
-
-                  // Mostramos un sub-menú con todas las playlists creadas
-                  showModalBottomSheet(
-                    context: context,
-                    backgroundColor: const Color(0xFF282828),
-                    builder: (context) {
-                      return ListView.builder(
-                        itemCount: pProvider.playlists.length,
-                        itemBuilder: (context, i) {
-                          final pl = pProvider.playlists[i];
-                          return ListTile(
-                            title: Text(pl.nombre),
-                            leading: Icon(Icons.music_note, color: Theme.of(context).colorScheme.primary),
-                            onTap: () {
-                              // 1. Guardamos el resultado de la operación (true o false)
-                              bool seAgrego = pProvider.addCancionAPlaylist(pl.id, cancion);
-                              
-                              Navigator.pop(context); // Cierra el sub-menú
-
-                              if (seAgrego) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Añadida a "${pl.nombre}"'),
-                                    backgroundColor: const Color.fromARGB(255, 237, 221, 184), // fondo cremita de éxito
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('"${cancion['title']}" ya está añadida a esta playlist'),
-                                    backgroundColor: Colors.amber[800], // fondo naranja de advertencia
-                                  ),
-                                );
-                              }
-                            },
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -243,12 +126,36 @@ class _SearchState extends State<Search> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             subtitle: Text(cancion['artist']!, style: const TextStyle(color: Colors.grey)),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.more_vert, color: Colors.grey),
-                              onPressed: () => _mostrarOpciones(context, cancion),
+                            //row para que se alineen los dos al trailing porque sino tenes que poner una sola cosa
+                            trailing: Row(
+                              //es importante aca que usemos el mainaxissize porque sino el row va querer ocupar todo el espacio entonces esto siempre lo debemos poner si es dentro de un listile
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+
+                                Text(
+                                  cancion['duration']!,
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+
+                                const SizedBox(width: 4),
+
+                                //con este boton lo que hago es llamar al widget donde me despliega el menu con las opciones de agregarla a favoritos o a las playlist creadas (esta en otro archivo)
+                                IconButton(
+                                  icon: const Icon(Icons.more_vert, color: Colors.grey),
+                                  onPressed: () => OpcionesCancion.mostrarOpciones( context, cancion,),
+                                )
+                              ]
                             ),
                             onTap: () {
                               // Acá podrías mandar la canción al reproductor
+                              context.read<ReproductorProvider>().reproducir(
+                                id: cancion['id']!,
+                                titulo: cancion['title']!,
+                                artista: cancion['artist']!,
+                                imagen: cancion['image']!,
+                              );
                             },
                           );
                         },

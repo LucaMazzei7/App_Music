@@ -5,15 +5,15 @@ import 'package:provider/provider.dart';
 import '../provider/menu_provider.dart';
 import '../provider/playlist_provider.dart'; // Importamos el nuevo provider
 
-class Home_page extends StatefulWidget {
-  const Home_page({super.key, required this.title});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key, required this.title});
   final String title;
 
   @override
-  State<Home_page> createState() => _MyHomePageState();
+  State<HomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<Home_page> {
+class _MyHomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // Escuchamos las playlists creadas
@@ -62,11 +62,13 @@ class _MyHomePageState extends State<Home_page> {
 
   // COMPONENTE: Contenedor Expandido de Playlists
   Widget _buildSeccionPlaylists(List<dynamic> listaPlaylists, PlaylistProvider playlistProvider) {
-    return Expanded(
-      child: listaPlaylists.isEmpty
+    return Expanded( //con expanded utilizo todo el espacio verticalmente
+      child: listaPlaylists.isEmpty 
+          //si la lista esta vacia
           ? const Center(
               child: Text('Aún no creaste ninguna playlist.', style: TextStyle(color: Colors.grey)),
             )
+          //si no esta vacia, hay playlist creo un listview
           : ListView.separated(
               itemCount: listaPlaylists.length,
               separatorBuilder: (context, index) => const Divider(),
@@ -81,10 +83,14 @@ class _MyHomePageState extends State<Home_page> {
   // COMPONENTE: Celda ListTile de cada Playlist
   Widget _buildPlaylistItem(dynamic playlist, PlaylistProvider playlistProvider) {
     return ListTile(
+      //leading: lo ponemos hacia la izquierda, cliprrect: redondear esquinas
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(4),
+        //.imagepath != null: pregugntamos si tiene imagen la playlist
         child: playlist.imagePath != null
+            //si la tiene cargamos desde el almacenamiento
             ? Image.file(File(playlist.imagePath!), width: 45, height: 45, fit: BoxFit.cover)
+            //si no tiene imagen ponemos este container por default
             : Container(
                 width: 45,
                 height: 45,
@@ -94,6 +100,7 @@ class _MyHomePageState extends State<Home_page> {
       ),
       title: Text(playlist.nombre),
       subtitle: Text('${playlist.canciones.length} canciones'),
+      //boton eliminar
       trailing: IconButton(
         icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
         onPressed: () {
@@ -101,7 +108,15 @@ class _MyHomePageState extends State<Home_page> {
         },
       ),
       onTap: () {
-        // Lógica para abrir los detalles de la playlist más adelante
+        // Lógica para abrir los detalles de la playlist 
+        //con navigator push vos le decis que pantalla exactamente abrir al navegador cuando tocas el boton
+        //como tenemos que abrir una playlist en especifico, usamos pushnamed que no construye una pantalla arriba, sino que busca en el archivo de rutas y abre una asociada
+        Navigator.pushNamed(
+          context, 
+          'ver_playlist',
+          //le enviamos como argumento que playlist es la que tocamos para que sepa de cual tiene que cargar info
+          arguments: playlist.id,
+        );
       },
     );
   }

@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 
 //Se genera de manera privada la clase
-class _MenuProvider {
+class MenuProvider {
   //Se genera una lista dinámica y se inicializa como una lista vacía
   List<dynamic> opciones = [];
 
   //Se define el constructor
-  _MenuProvider();
+  MenuProvider();
 
   //El método cargarData es un Future que permite devolver el listado de rutas una vez que se ha leído del archivo JSON
   //El Future va a retornar cuando esté disponible, la información en una lista dinámica
@@ -23,4 +23,4 @@ class _MenuProvider {
 }
 
 //Se crea la instancia del MenuProvider
-final menuProvider =  _MenuProvider();
+final menuProvider =  MenuProvider();

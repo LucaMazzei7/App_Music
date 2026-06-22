@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'iniciar_sesion.dart';
 import 'search.dart'; 
+import 'miniplayer.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({super.key});
@@ -17,8 +18,8 @@ class _NavigationPageState extends State<NavigationPage> {
   // Lista de tus páginas reales con los parámetros que necesitan
   final List<Widget> _paginas = [
     const InicioSesion(title: 'Iniciar sesión'), // Índice 0
-    const Home_page(title: 'Pagina de inicio'),  // Índice 1
-    const Search(),                            // Índice 2                        
+    const HomePage(title: 'Pagina de inicio'),  // Índice 1
+    const Search(),                      // Índice 2                        
   ];
 
   @override
@@ -28,8 +29,13 @@ class _NavigationPageState extends State<NavigationPage> {
         index: _currentIndex,
         children: _paginas,
       ),
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const MiniPlayer(),
+
+          NavigationBarTheme(
+          data: NavigationBarThemeData(
           indicatorColor: Colors.transparent,
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
@@ -38,7 +44,8 @@ class _NavigationPageState extends State<NavigationPage> {
             return const TextStyle(color: Colors.grey, fontSize: 12);
           }),
         ),
-        child: NavigationBar(
+        child: 
+        NavigationBar(
           backgroundColor: const Color(0xFF181818),
           height: 65,
           selectedIndex: _currentIndex,
@@ -64,8 +71,10 @@ class _NavigationPageState extends State<NavigationPage> {
               label: 'Search',
             ),
           ],
-        ),
+         ),
+        )
+        ]
       ),
-    );
+    ); 
   }
 }
