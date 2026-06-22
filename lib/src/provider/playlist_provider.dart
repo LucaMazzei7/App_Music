@@ -24,7 +24,7 @@ class PlaylistProvider extends ChangeNotifier {
   PlaylistModel crearPlaylist(String nombre, String? imagePath) {
     final nuevaPlaylist = PlaylistModel(
       id: DateTime.now().toString(), // ID único temporal
-      nombre: nombre,
+      nombre: nombre, 
       imagePath: imagePath,
       canciones: [],
     );

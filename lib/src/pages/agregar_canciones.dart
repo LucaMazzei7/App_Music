@@ -21,17 +21,21 @@ class AgregarCanciones extends StatefulWidget {
 class _AgregarCancionesState extends State<AgregarCanciones> {
   List<Map<String, String>> cancionesSeleccionadas = [];
   late String playlistId;
+  late String nombrePlaylist;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    playlistId =
-        ModalRoute.of(context)!.settings.arguments as String;
+    final args =
+      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+  playlistId = args['id'] as String;
+  nombrePlaylist = args['nombre'] as String;
+
   }
 
  void toggleCancion(Map<String, String> cancion) {
   final yaSeleccionada = cancionesSeleccionadas.contains(cancion);
-
+  
   setState(() {
     if (yaSeleccionada) {
       cancionesSeleccionadas.remove(cancion);
@@ -112,7 +116,7 @@ class _AgregarCancionesState extends State<AgregarCanciones> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Agregar canciones a la Playlist: ${widget.nombrePlaylist}"),
+        title: Text("Agregar canciones a la Playlist: $nombrePlaylist"),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),

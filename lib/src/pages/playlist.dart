@@ -84,8 +84,8 @@ class _PlaylistState extends State<Playlist> {
                     const SnackBar(content: Text('¡Playlist creada con éxito!')),
                   );
 
-                  // VOLVER AUTOMÁTICAMENTE A LA HOME_PAGE
-                  Navigator.pushNamed(context, 'Canciones', arguments: nuevaPlaylist.id); // 
+                  // Enviar el ID y nombre de la nueva playlist a la página de canciones para agregar canciones
+                  Navigator.pushNamed(context, 'Canciones', arguments: {'id': nuevaPlaylist.id, 'nombre': nuevaPlaylist.nombre}); // 
                 }
               },
               child: const Text('Guardar Playlist', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
