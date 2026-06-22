@@ -6,6 +6,7 @@ import '../pages/iniciar_sesion.dart';
 import '../pages/crear_playlist.dart';
 import '../pages/navigation_page.dart';
 import '../pages/ver_playlist.dart';
+import '../pages/agregar_canciones.dart';
 
 // Función que retorna el mapa de rutas configurado
 Map<String, WidgetBuilder> getApplicationRoutes() {
@@ -20,5 +21,9 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
     'Playlist':  (BuildContext context) => const Playlist(), 
     'Favoritos': (BuildContext context) => const Favoritos(),
     'ver_playlist': (BuildContext context) => const VerPlaylist(),
+    'Canciones': (BuildContext context) => AgregarCanciones(
+      nombrePlaylist: '',
+      onGuardar: (_) {},
+),
   };
 }

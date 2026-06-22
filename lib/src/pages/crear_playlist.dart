@@ -1,3 +1,4 @@
+
 // lib/src/pages/playlist.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,10 +13,13 @@ class Playlist extends StatefulWidget {
 
 class _PlaylistState extends State<Playlist> {
   final TextEditingController _nameController = TextEditingController();
+   // Crear la playlist al iniciar el estado
 
+   @override
   @override
   Widget build(BuildContext context) {
     final playlistProvider = context.read<PlaylistProvider>();
+    
 
     return Scaffold(
       appBar: AppBar(title: const Text('Crear Playlist')),
@@ -71,7 +75,7 @@ class _PlaylistState extends State<Playlist> {
               onPressed: () {
                 if (_nameController.text.isNotEmpty) {
                   // Envia los datos al Provider (pasamos null en la ruta de imagen por ahora)
-                  playlistProvider.crearPlaylist(_nameController.text, null);
+                 final nuevaPlaylist = playlistProvider.crearPlaylist(_nameController.text, null);
                   
                   // Limpia el campo de texto
                   _nameController.clear();
@@ -81,8 +85,8 @@ class _PlaylistState extends State<Playlist> {
                     const SnackBar(content: Text('¡Playlist creada con éxito!')),
                   );
 
-                  // VOLVER AUTOMÁTICAMENTE A LA HOME_PAGE
-                  Navigator.pop(context);
+                  // Enviar el ID y nombre de la nueva playlist a la página de canciones para agregar canciones
+                  Navigator.pushNamed(context, 'Canciones', arguments: {'id': nuevaPlaylist.id, 'nombre': nuevaPlaylist.nombre}); // 
                 }
               },
               child: const Text('Guardar Playlist', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),

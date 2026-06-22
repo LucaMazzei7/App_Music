@@ -21,15 +21,16 @@ class PlaylistProvider extends ChangeNotifier {
   List<PlaylistModel> get playlists => _playlists;
 
   // Crear una nueva playlist
-  void crearPlaylist(String nombre, String? imagePath) {
+  PlaylistModel crearPlaylist(String nombre, String? imagePath) {
     final nuevaPlaylist = PlaylistModel(
       id: DateTime.now().toString(), // ID único temporal
-      nombre: nombre,
+      nombre: nombre, 
       imagePath: imagePath,
       canciones: [],
     );
     _playlists.add(nuevaPlaylist);
     notifyListeners();
+     return nuevaPlaylist;
   }
 
   // Eliminar una playlist

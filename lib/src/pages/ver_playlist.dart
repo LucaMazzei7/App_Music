@@ -99,7 +99,7 @@ class VerPlaylist extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                   onPressed: () {
                     // agregar canciones
-                    Navigator.pushNamed(context, 'Search');
+                    Navigator.pushNamed(context, 'Canciones', arguments: {'id': playlist.id, 'nombre': playlist.nombre});
                   },
                 ),
               ),
