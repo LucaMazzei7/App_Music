@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
 class InicioSesion extends StatefulWidget {
-  const InicioSesion({super.key,required this.title});
+  const InicioSesion({super.key, required this.title});
   final String title;
   @override
   State<InicioSesion> createState() => IniciarSesion();
-  
-
-
 }
-
 
 class IniciarSesion extends State<InicioSesion> {
   String _nombre = '';
@@ -21,7 +17,7 @@ class IniciarSesion extends State<InicioSesion> {
     super.initState();
     _IniciarSesion.text = 'Valor inicial del input';
     _IniciarSesion.addListener(() {
-    print('El valor del input es: ${_IniciarSesion.text}');
+      print('El valor del input es: ${_IniciarSesion.text}');
     });
   }
 
@@ -32,14 +28,22 @@ class IniciarSesion extends State<InicioSesion> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Iniciar sesion')),
+      appBar: AppBar(
+        title: Padding(
+          padding: const EdgeInsets.only(top: 30.0),
+          child: const Text(
+            'Iniciar Sesión',
+            style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
         children: [
+          const SizedBox(height: 25),
           _crearInput(),
           Divider(),
           _crearEmail(),
@@ -53,15 +57,15 @@ class IniciarSesion extends State<InicioSesion> {
       ),
     );
   }
-Widget _crearInput() {
+
+  Widget _crearInput() {
     return TextField(
       textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
-        iconColor:  const Color.fromARGB(255, 100, 165, 25),
+        iconColor: Theme.of(context).colorScheme.primary,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-        hintText: 'Nombre de la persona',
-        labelText: 'Nombre',
-        helperText: 'Solo nombre',
+        hintText: 'Usuario',
+        labelText: 'Usuario',
         suffixIcon: Icon(Icons.accessibility),
         icon: Icon(Icons.account_circle),
       ),
@@ -79,10 +83,10 @@ Widget _crearInput() {
       //keyboardType permite que en el teclado del dispositivo móvil se encuentre accesible el arroba (@) con el fin de escribir las direcciones de correo con mayor facilidad
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
-        iconColor:  const Color.fromARGB(255, 100, 165, 25),
+        iconColor: Theme.of(context).colorScheme.primary,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-        hintText: 'Email',
-        labelText: 'Email',
+        hintText: 'Correo electrónico',
+        labelText: 'Correo electrónico',
         suffixIcon: Icon(Icons.alternate_email),
         icon: Icon(Icons.email),
       ),
@@ -100,10 +104,10 @@ Widget _crearInput() {
       //obscureText permite ocultar los caracteres que se ingresan en un input reemplazandolos por asteriscos
       obscureText: true,
       decoration: InputDecoration(
-        iconColor:  const Color.fromARGB(255, 100, 165, 25),
+        iconColor: Theme.of(context).colorScheme.primary,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-        hintText: 'Password',
-        labelText: 'Password',
+        hintText: 'Constraseña',
+        labelText: 'Contraseña',
         suffixIcon: Icon(Icons.lock_open),
         icon: Icon(Icons.lock),
       ),
@@ -115,15 +119,16 @@ Widget _crearInput() {
 
   Widget _crearPersona() {
     return ListTile(  title: Text('Nombre es: $_nombre'),
-      subtitle: Text('Email: $_email'),
+      subtitle: Text('Correo: $_email'),
     );
   }
+
   Widget _crearBoton() {
     return ElevatedButton(
-    onPressed: () {
-      Navigator.pushNamed(context, 'home');
-    },
-    child: const Text('Iniciar sesión'),
-  );
-}
+      onPressed: () {
+        Navigator.pushNamed(context, '/');
+      },
+      child: const Text('Iniciar sesión'),
+    );
+  }
 }
