@@ -10,21 +10,21 @@ class InicioSesion extends StatefulWidget {
 class IniciarSesion extends State<InicioSesion> {
   String _nombre = '';
   String _email = '';
-  final TextEditingController _IniciarSesion = TextEditingController();
+  final TextEditingController _iniciarSesion = TextEditingController();
   
   @override
   void initState() {
     super.initState();
-    _IniciarSesion.text = 'Valor inicial del input';
-    _IniciarSesion.addListener(() {
-      print('El valor del input es: ${_IniciarSesion.text}');
+    _iniciarSesion.text = 'Valor inicial del input';
+    _iniciarSesion.addListener(() {
+      print('El valor del input es: ${_iniciarSesion.text}');
     });
   }
 
   // Destrucción obligatoria para liberar memoria RAM
   @override
   void dispose() {
-    _IniciarSesion.dispose();
+    _iniciarSesion.dispose();
     super.dispose();
   }
 
