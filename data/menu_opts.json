@@ -1,0 +1,18 @@
+{
+    "nombreApp" : "APP_MUSIC",
+    "rutas" : [
+        {
+            "ruta" : "Playlist",
+            "icono": "agregar_p",
+            "texto": "Crear Playlist"
+        },
+        {
+            "ruta" : "Favoritos",
+            "icono": "FavIcon",
+            "texto": "Favoritos"
+        }
+
+    ]
+}
+
+

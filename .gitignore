@@ -1,0 +1,11 @@
+# Flutter build artifacts
+build/
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Windows ephemeral files
+windows/flutter/ephemeral/
+build/
+.dart_tool/
