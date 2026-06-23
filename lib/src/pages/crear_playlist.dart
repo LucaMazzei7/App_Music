@@ -86,10 +86,12 @@ class _PlaylistState extends State<Playlist> {
                   );
 
                   // Enviar el ID y nombre de la nueva playlist a la página de canciones para agregar canciones
-                  Navigator.pushNamed(context, 'Canciones', arguments: {'id': nuevaPlaylist.id, 'nombre': nuevaPlaylist.nombre}); // 
+                  Navigator.pushNamed(context, 'Canciones', arguments: {'id': nuevaPlaylist.id, 'nombre': nuevaPlaylist.nombre,'estado':'crear_play'}); // 
                 }
               },
+              
               child: const Text('Guardar Playlist', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              
             ),
           ],
         ),

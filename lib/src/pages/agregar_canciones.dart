@@ -22,7 +22,7 @@ class _AgregarCancionesState extends State<AgregarCanciones> {
   List<Map<String, String>> cancionesSeleccionadas = [];
   late String playlistId;
   late String nombrePlaylist;
-
+  late String estado;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -30,7 +30,7 @@ class _AgregarCancionesState extends State<AgregarCanciones> {
       ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
   playlistId = args['id'] as String;
   nombrePlaylist = args['nombre'] as String;
-
+  estado=args['estado'] as String; 
   }
 
  void toggleCancion(Map<String, String> cancion) {
@@ -108,7 +108,9 @@ class _AgregarCancionesState extends State<AgregarCanciones> {
     );
   }
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    Navigator.pop(context);
+     if (estado=='crear_play'){
+          Navigator.pop(context);
+     }
     Navigator.pop(context);
   }
 
