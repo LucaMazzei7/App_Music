@@ -12,18 +12,18 @@ import '../pages/agregar_canciones.dart';
 Map<String, WidgetBuilder> getApplicationRoutes() {
   return <String, WidgetBuilder>{
     // La ruta raíz '/' ahora pasa a ser la NavigationPage
-    '/': (BuildContext context) => const NavigationPage(),
-    
+    '/': (BuildContext context) => const InicioSesion(title: 'Iniciar sesión'),
+
     // Mantenemos las rutas a las páginas individuales para acceso directo
-    'Login':     (BuildContext context) => const InicioSesion(title: 'Iniciar sesión'),
-    'Home':      (BuildContext context) => const HomePage(title: 'Pagina de inicio'),
-    'Search':    (BuildContext context) => const Search(),
-    'Playlist':  (BuildContext context) => const Playlist(), 
+    'Login': (BuildContext context) =>
+        const InicioSesion(title: 'Iniciar sesión'),
+    'Home': (BuildContext context) => const HomePage(title: 'Pagina de inicio'),
+    'Search': (BuildContext context) => const Search(),
+    'Playlist': (BuildContext context) => const Playlist(),
     'Favoritos': (BuildContext context) => const Favoritos(),
+    'Navigator': (BuildContext context) => const NavigationPage(),
     'ver_playlist': (BuildContext context) => const VerPlaylist(),
-    'Canciones': (BuildContext context) => AgregarCanciones(
-      nombrePlaylist: '',
-      onGuardar: (_) {},
-),
+    'Canciones': (BuildContext context) =>
+        AgregarCanciones(nombrePlaylist: '', onGuardar: (_) {}),
   };
 }

@@ -13,7 +13,7 @@ class IniciarSesion extends State<InicioSesion> {
   String _nombre = '';
   String _email = '';
   final TextEditingController _iniciarSesion = TextEditingController();
-  
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +38,11 @@ class IniciarSesion extends State<InicioSesion> {
           padding: const EdgeInsets.only(top: 30.0),
           child: const Text(
             'Iniciar Sesión',
-            style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
@@ -120,7 +124,8 @@ class IniciarSesion extends State<InicioSesion> {
   }
 
   Widget _crearPersona() {
-    return ListTile(  title: Text('Nombre es: $_nombre'),
+    return ListTile(
+      title: Text('Nombre es: $_nombre'),
       subtitle: Text('Correo: $_email'),
     );
   }
@@ -128,9 +133,9 @@ class IniciarSesion extends State<InicioSesion> {
   Widget _crearBoton() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, '/');
+        Navigator.pushNamed(context, 'Navigator');
       },
-      child: const Text('Iniciar sesión'),
+      child: const Text('Iniciar Sesion'),
     );
   }
 }
