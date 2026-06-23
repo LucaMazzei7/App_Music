@@ -10,8 +10,6 @@ class InicioSesion extends StatefulWidget {
 }
 
 class IniciarSesion extends State<InicioSesion> {
-  String _nombre = '';
-  String _email = '';
   final TextEditingController _iniciarSesion = TextEditingController();
 
   @override
@@ -34,52 +32,26 @@ class IniciarSesion extends State<InicioSesion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(top: 30.0),
-          child: const Text(
-            'Iniciar Sesión',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
+        title: const Text(
+          'Iniciar Sesion',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
         children: [
           const SizedBox(height: 25),
-          _crearInput(),
-          Divider(),
           _crearEmail(),
           Divider(),
           _crearPassword(),
-          Divider(),
-          _crearPersona(),
-          Divider(),
-          _crearBoton(),
+          const SizedBox(height: 25),
+          _iniciarsesion(),
         ],
       ),
-    );
-  }
-
-  Widget _crearInput() {
-    return TextField(
-      textCapitalization: TextCapitalization.sentences,
-      decoration: InputDecoration(
-        iconColor: Theme.of(context).colorScheme.primary,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-        hintText: 'Usuario',
-        labelText: 'Usuario',
-        suffixIcon: Icon(Icons.accessibility),
-        icon: Icon(Icons.account_circle),
-      ),
-      onChanged: (valor) {
-        setState(() {
-          _nombre = valor;
-        });
-      },
     );
   }
 
@@ -96,11 +68,6 @@ class IniciarSesion extends State<InicioSesion> {
         suffixIcon: Icon(Icons.alternate_email),
         icon: Icon(Icons.email),
       ),
-      onChanged: (valor) {
-        setState(() {
-          _email = valor;
-        });
-      },
     );
   }
 
@@ -123,19 +90,12 @@ class IniciarSesion extends State<InicioSesion> {
     );
   }
 
-  Widget _crearPersona() {
-    return ListTile(
-      title: Text('Nombre es: $_nombre'),
-      subtitle: Text('Correo: $_email'),
-    );
-  }
-
-  Widget _crearBoton() {
+  Widget _iniciarsesion() {
     return ElevatedButton(
       onPressed: () {
         Navigator.pushNamed(context, 'Navigator');
       },
-      child: const Text('Iniciar Sesion'),
+      child: const Text('Iniciar Sesion', style: TextStyle(fontSize: 24)),
     );
   }
 }

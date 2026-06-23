@@ -7,12 +7,18 @@ import '../pages/crear_playlist.dart';
 import '../pages/navigation_page.dart';
 import '../pages/ver_playlist.dart';
 import '../pages/agregar_canciones.dart';
+import '../pages/inicio.dart';
+import '../pages/registrarse.dart';
 
 // Función que retorna el mapa de rutas configurado
 Map<String, WidgetBuilder> getApplicationRoutes() {
   return <String, WidgetBuilder>{
     // La ruta raíz '/' ahora pasa a ser la NavigationPage
-    '/': (BuildContext context) => const InicioSesion(title: 'Iniciar sesión'),
+    'IniciarSesion': (BuildContext context) =>
+        const InicioSesion(title: 'Iniciar sesión'),
+    'Registro': (BuildContext context) => const RegistroSesion(title: 'Inicio'),
+
+    '/': (BuildContext context) => const Inicio(title: 'Inicio'),
 
     // Mantenemos las rutas a las páginas individuales para acceso directo
     'Login': (BuildContext context) =>

@@ -1,7 +1,7 @@
 // lib/src/app.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 // Importamos tus dos providers centralizados
 import 'provider/favoritos_provider.dart';
 import 'provider/playlist_provider.dart';
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => FavoritosProvider()),
         ChangeNotifierProvider(create: (context) => PlaylistProvider()),
-        ChangeNotifierProvider(create: (_) => ReproductorProvider(),),
+        ChangeNotifierProvider(create: (_) => ReproductorProvider()),
       ],
       child: MaterialApp(
         title: 'Music App',
@@ -34,6 +34,17 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.dark,
           ),
         ),
+        localizationsDelegates: const [
+          // Delegados
+          GlobalMaterialLocalizations
+              .delegate, // Traduce componentes Material (ej. Calendarios)
+          GlobalWidgetsLocalizations
+              .delegate, // Traduce la dirección del texto (ej. de Izq a Der)
+          GlobalCupertinoLocalizations
+              .delegate, // Traduce componentes estilo iOS
+        ],
+        // Definimos los idiomas soportados por nuestra aplicación
+        supportedLocales: const [Locale('en', 'US'), Locale('es', 'ES')],
       ),
     );
   }
