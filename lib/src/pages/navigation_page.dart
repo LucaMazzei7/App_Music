@@ -60,7 +60,7 @@ class _NavigationPageState extends State<NavigationPage> {
                     Icons.home,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  label: 'Home',
+                  label: 'Inicio',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.search_outlined),
@@ -68,7 +68,7 @@ class _NavigationPageState extends State<NavigationPage> {
                     Icons.search,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  label: 'Search',
+                  label: 'Buscar',
                 ),
               ],
             ),
