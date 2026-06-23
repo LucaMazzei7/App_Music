@@ -49,7 +49,7 @@ class _MyHomePageState extends State<HomePage> {
         ),
       ],
       title: const Text(
-        'Home',
+        'Inicio',
         style: TextStyle(
           color: Colors.white,
           fontSize: 32,
