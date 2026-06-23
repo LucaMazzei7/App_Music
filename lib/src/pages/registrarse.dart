@@ -135,7 +135,7 @@ class RegistrarSesion extends State<RegistroSesion> {
   Widget _registrarsesion() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, '/');
+        Navigator.pushNamed(context, 'Login');
       },
       child: const Text('Registrarse', style: TextStyle(fontSize: 20)),
     );
