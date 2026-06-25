@@ -156,12 +156,12 @@ class _MyHomePageState extends State<HomePage> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // 2. Si ya hay datos, mapeamos la lista de una directamente
+        // Si ya hay datos, mapeamos la lista de una directamente
         if (snapshot.hasData) {
           return Column(children: _listaItems(snapshot.data));
         }
 
-        // 3. Si falló por alguna razón, mostramos el error
+        // Si falló por alguna razón, mostramos el error
         return Center(child: Text('Error al cargar el menú'));
       },
     );

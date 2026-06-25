@@ -53,8 +53,8 @@ final List<Map<String, String>> cancionesDePrueba = [
     'id': '7',
     'title': 'New Rules',
     'artist': 'Dua Lipa',
-    'album': '3:32',
-    'duration': '',
+    'album': 'Dua Lipa',
+    'duration': '3:32',
     'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5VORADV5phs7ZxP-vG2B7ggdnyGrj5595r_ZgnfJc4A&s=10'
   },
  {
