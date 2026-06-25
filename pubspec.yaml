@@ -17,6 +17,7 @@ dependencies:
   # === DEPENDENCIAS DE SPOTIFY Y MANEJO DE ESTADO ===
   image_picker: ^1.1.2
   provider: ^6.1.2
+  firebase_core: ^4.11.0
 
 dev_dependencies:
   flutter_test:
@@ -29,3 +30,4 @@ flutter:
   assets:
     - data/menu_opts.json
     - assets/image/
+    - data/usuarios.json

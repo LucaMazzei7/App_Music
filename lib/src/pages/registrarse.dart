@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_print
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 class RegistroSesion extends StatefulWidget {
@@ -9,9 +11,12 @@ class RegistroSesion extends StatefulWidget {
 }
 
 class RegistrarSesion extends State<RegistroSesion> {
+  final TextEditingController usuario= TextEditingController();
+  final TextEditingController correo= TextEditingController();
+  final TextEditingController contra= TextEditingController();
+  final TextEditingController fechaNac= TextEditingController();
+  final TextEditingController genero= TextEditingController();
   String _fecha = '';
-
-  final TextEditingController _inputFieldController = TextEditingController();
   final List<String> opcionesGenero = ['Masculino', 'Femenino', 'Otro'];
   String _genero = 'Genero';
   final TextEditingController _iniciarSesion = TextEditingController();
@@ -67,6 +72,7 @@ class RegistrarSesion extends State<RegistroSesion> {
 
   Widget _crearUsuario() {
     return TextField(
+      controller: usuario,
       //keyboardType permite que en el teclado del dispositivo móvil se encuentre accesible el arroba (@) con el fin de escribir las direcciones de correo con mayor facilidad
       keyboardType: TextInputType.name,
       decoration: InputDecoration(
@@ -82,6 +88,7 @@ class RegistrarSesion extends State<RegistroSesion> {
 
   Widget _crearGenero() {
     return DropdownMenu<String>(
+      controller: genero,
       width: MediaQuery.of(context).size.width - 40,
       label: const Text('Género'),
       leadingIcon: const Icon(Icons.person_outline),
@@ -100,6 +107,7 @@ class RegistrarSesion extends State<RegistroSesion> {
   //Widget para generar un inputs para email
   Widget _crearEmail() {
     return TextField(
+      controller: correo,
       //keyboardType permite que en el teclado del dispositivo móvil se encuentre accesible el arroba (@) con el fin de escribir las direcciones de correo con mayor facilidad
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
@@ -116,6 +124,7 @@ class RegistrarSesion extends State<RegistroSesion> {
   //Widget para generar un inputs para password
   Widget _crearPassword() {
     return TextField(
+      controller: contra,
       //obscureText permite ocultar los caracteres que se ingresan en un input reemplazandolos por asteriscos
       obscureText: true,
       decoration: InputDecoration(
@@ -135,7 +144,8 @@ class RegistrarSesion extends State<RegistroSesion> {
   Widget _registrarsesion() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, 'Login');
+        //Navigator.pushNamed(context, 'Login');
+        _guardarUsuario();
       },
       child: const Text('Registrarse', style: TextStyle(fontSize: 20)),
     );
@@ -145,7 +155,7 @@ class RegistrarSesion extends State<RegistroSesion> {
     return TextField(
       // Bloqueamos la selección y el portapapeles para obligar al usuario a usar el calendario
       enableInteractiveSelection: false,
-      controller: _inputFieldController, // Enlazamos el controlador al input
+      controller: fechaNac, // Enlazamos el controlador al input
       decoration: InputDecoration(
         iconColor: Theme.of(context).colorScheme.primary,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -183,8 +193,13 @@ class RegistrarSesion extends State<RegistroSesion> {
         final anio = calendario.year.toString();
 
         _fecha = '$dia/$mes/$anio';
-        _inputFieldController.text = _fecha;
+        fechaNac.text = _fecha;
       });
     }
+  }
+  Future<void> _guardarUsuario() async{
+    final usuarios = await rootBundle.loadString('data/usuarios.json');
+    Map<String,dynamic> dataMap = json.decode(usuarios);
+    print(dataMap);
   }
 }

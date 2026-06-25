@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
-
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 class InicioSesion extends StatefulWidget {
@@ -10,6 +11,9 @@ class InicioSesion extends StatefulWidget {
 }
 
 class IniciarSesion extends State<InicioSesion> {
+  List<dynamic> usuarios=[];
+  final TextEditingController correoController = TextEditingController();
+  final TextEditingController contraController = TextEditingController();
   final TextEditingController _iniciarSesion = TextEditingController();
 
   @override
@@ -58,7 +62,7 @@ class IniciarSesion extends State<InicioSesion> {
   //Widget para generar un inputs para email
   Widget _crearEmail() {
     return TextField(
-      //keyboardType permite que en el teclado del dispositivo móvil se encuentre accesible el arroba (@) con el fin de escribir las direcciones de correo con mayor facilidad
+      controller: correoController,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         iconColor: Theme.of(context).colorScheme.primary,
@@ -74,7 +78,7 @@ class IniciarSesion extends State<InicioSesion> {
   //Widget para generar un inputs para password
   Widget _crearPassword() {
     return TextField(
-      //obscureText permite ocultar los caracteres que se ingresan en un input reemplazandolos por asteriscos
+      controller: contraController,
       obscureText: true,
       decoration: InputDecoration(
         iconColor: Theme.of(context).colorScheme.primary,
@@ -93,9 +97,36 @@ class IniciarSesion extends State<InicioSesion> {
   Widget _iniciarsesion() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, 'Navigator');
+        _verificar();
       },
       child: const Text('Iniciar Sesion', style: TextStyle(fontSize: 24)),
     );
+  }
+
+  Future<List<dynamic>>  cargarUsuario() async {
+
+  final resp = await rootBundle.loadString('data/usuarios.json');
+  Map<String,dynamic> dataMap = json.decode(resp);
+  usuarios = dataMap['usuario'];
+  return usuarios;
+}
+
+  void _verificar(){
+    cargarUsuario();
+    int i=0;
+    bool verifica=true;
+    while ((i<usuarios.length) & verifica){
+      if ((correoController.text==usuarios[i]["correo"]) & (contraController.text==usuarios[i]["contraseña"])){
+        print(usuarios[i]["correo"]);
+        print(usuarios[i]["correo"]);
+        verifica=false;
+      }
+      i++;
+    }
+    if (verifica){
+      print("no existis");
+    }else{
+      Navigator.pushNamed(context, 'Navigator');
+    }
   }
 }
