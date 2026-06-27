@@ -18,6 +18,8 @@ dependencies:
   image_picker: ^1.1.2
   provider: ^6.1.2
   firebase_core: ^4.11.0
+  firebase_auth: ^6.5.4
+  cloud_firestore: ^6.6.0
 
 dev_dependencies:
   flutter_test:
@@ -30,4 +32,4 @@ flutter:
   assets:
     - data/menu_opts.json
     - assets/image/
-    - data/usuarios.json
+    

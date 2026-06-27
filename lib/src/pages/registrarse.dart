@@ -1,8 +1,7 @@
 // ignore_for_file: avoid_print
-import 'dart:convert';
-import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
+import '/src/services/auth_service.dart';
 class RegistroSesion extends StatefulWidget {
   const RegistroSesion({super.key, required this.title});
   final String title;
@@ -15,12 +14,12 @@ class RegistrarSesion extends State<RegistroSesion> {
   final TextEditingController correo= TextEditingController();
   final TextEditingController contra= TextEditingController();
   final TextEditingController fechaNac= TextEditingController();
-  final TextEditingController genero= TextEditingController();
+  final TextEditingController generoController= TextEditingController();
   String _fecha = '';
   final List<String> opcionesGenero = ['Masculino', 'Femenino', 'Otro'];
-  String _genero = 'Genero';
+  String? generoSeleccionado;
   final TextEditingController _iniciarSesion = TextEditingController();
-
+  DateTime? fechaNacimientoSeleccionada;
   @override
   void initState() {
     super.initState();
@@ -88,14 +87,14 @@ class RegistrarSesion extends State<RegistroSesion> {
 
   Widget _crearGenero() {
     return DropdownMenu<String>(
-      controller: genero,
+      controller: generoController,
       width: MediaQuery.of(context).size.width - 40,
       label: const Text('Género'),
       leadingIcon: const Icon(Icons.person_outline),
-      initialSelection: _genero,
+      initialSelection: generoSeleccionado,
       onSelected: (String? valor) {
         setState(() {
-          _genero = valor!;
+          generoSeleccionado = valor;
         });
       },
       dropdownMenuEntries: opcionesGenero.map((String valor) {
@@ -141,11 +140,11 @@ class RegistrarSesion extends State<RegistroSesion> {
     );
   }
 
-  Widget _registrarsesion() {
+  Widget _registrarsesion()  {
     return ElevatedButton(
-      onPressed: () {
+      onPressed:() async {
         //Navigator.pushNamed(context, 'Login');
-        _guardarUsuario();
+        await _guardarUsuario();
       },
       child: const Text('Registrarse', style: TextStyle(fontSize: 20)),
     );
@@ -188,6 +187,7 @@ class RegistrarSesion extends State<RegistroSesion> {
     // Si el usuario no presionó "Cancelar" fuera del cuadro
     if (calendario != null) {
       setState(() {
+        fechaNacimientoSeleccionada=calendario;
         final dia = calendario.day.toString().padLeft(2, '0');
         final mes = calendario.month.toString().padLeft(2, '0');
         final anio = calendario.year.toString();
@@ -198,8 +198,57 @@ class RegistrarSesion extends State<RegistroSesion> {
     }
   }
   Future<void> _guardarUsuario() async{
-    final usuarios = await rootBundle.loadString('data/usuarios.json');
-    Map<String,dynamic> dataMap = json.decode(usuarios);
-    print(dataMap);
+    if(usuario.text.isEmpty){
+          ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ingresá un nombre de usuario')),
+    );
+    return;
+  }
+    if(correo.text.isEmpty){
+          ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ingresá un correo electrónico')),
+    );
+    return;
+  }
+    if(contra.text.isEmpty){
+          ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ingresá una contraseña')),
+    );
+    return;
+  }
+    if (fechaNacimientoSeleccionada == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Seleccioná una fecha de nacimiento')),
+    );
+    return;
+    }
+    if(generoSeleccionado==null){
+          ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Seleccioná un género')),
+    );
+    return;
+  }
+  try {
+    await AuthService().registrarUsuario(
+      nombre: usuario.text,
+      email: correo.text,
+      password: contra.text,
+      genero: generoSeleccionado!,
+      fechaNacimiento: fechaNacimientoSeleccionada!,
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Usuario registrado correctamente')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al registrar: $e')),
+    );
+
+    print('ERROR AL REGISTRAR: $e');
   }
 }
+}
+
