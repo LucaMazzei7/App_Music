@@ -1,7 +1,6 @@
-// ignore_for_file: avoid_print
-import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import '/src/services/auth_service.dart';
 
 class InicioSesion extends StatefulWidget {
   const InicioSesion({super.key, required this.title});
@@ -11,7 +10,7 @@ class InicioSesion extends StatefulWidget {
 }
 
 class IniciarSesion extends State<InicioSesion> {
-  List<dynamic> usuarios=[];
+  List<dynamic> usuarios = [];
   final TextEditingController correoController = TextEditingController();
   final TextEditingController contraController = TextEditingController();
   final TextEditingController _iniciarSesion = TextEditingController();
@@ -103,30 +102,16 @@ class IniciarSesion extends State<InicioSesion> {
     );
   }
 
-  Future<List<dynamic>>  cargarUsuario() async {
-
-  final resp = await rootBundle.loadString('data/usuarios.json');
-  Map<String,dynamic> dataMap = json.decode(resp);
-  usuarios = dataMap['usuario'];
-  return usuarios;
-}
-
-  void _verificar(){
-    cargarUsuario();
-    int i=0;
-    bool verifica=true;
-    while ((i<usuarios.length) & verifica){
-      if ((correoController.text==usuarios[i]["correo"]) & (contraController.text==usuarios[i]["contraseña"])){
-        print(usuarios[i]["correo"]);
-        print(usuarios[i]["correo"]);
-        verifica=false;
-      }
-      i++;
-    }
-    if (verifica){
-      print("no existis");
-    }else{
+  Future<void> _verificar() async {
+    if (await AuthService().iniciarSesion(
+      correo: correoController.text,
+      contrasena: contraController.text,
+    )) {
       Navigator.pushNamed(context, 'Navigator');
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Usuario o contraseña erroneo')));
     }
   }
 }

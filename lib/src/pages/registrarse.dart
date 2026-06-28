@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '/src/services/auth_service.dart';
+
 class RegistroSesion extends StatefulWidget {
   const RegistroSesion({super.key, required this.title});
   final String title;
@@ -10,11 +11,11 @@ class RegistroSesion extends StatefulWidget {
 }
 
 class RegistrarSesion extends State<RegistroSesion> {
-  final TextEditingController usuario= TextEditingController();
-  final TextEditingController correo= TextEditingController();
-  final TextEditingController contra= TextEditingController();
-  final TextEditingController fechaNac= TextEditingController();
-  final TextEditingController generoController= TextEditingController();
+  final TextEditingController usuario = TextEditingController();
+  final TextEditingController correo = TextEditingController();
+  final TextEditingController contra = TextEditingController();
+  final TextEditingController fechaNac = TextEditingController();
+  final TextEditingController generoController = TextEditingController();
   String _fecha = '';
   final List<String> opcionesGenero = ['Masculino', 'Femenino', 'Otro'];
   String? generoSeleccionado;
@@ -140,9 +141,9 @@ class RegistrarSesion extends State<RegistroSesion> {
     );
   }
 
-  Widget _registrarsesion()  {
+  Widget _registrarsesion() {
     return ElevatedButton(
-      onPressed:() async {
+      onPressed: () async {
         //Navigator.pushNamed(context, 'Login');
         await _guardarUsuario();
       },
@@ -187,7 +188,7 @@ class RegistrarSesion extends State<RegistroSesion> {
     // Si el usuario no presionó "Cancelar" fuera del cuadro
     if (calendario != null) {
       setState(() {
-        fechaNacimientoSeleccionada=calendario;
+        fechaNacimientoSeleccionada = calendario;
         final dia = calendario.day.toString().padLeft(2, '0');
         final mes = calendario.month.toString().padLeft(2, '0');
         final anio = calendario.year.toString();
@@ -197,58 +198,59 @@ class RegistrarSesion extends State<RegistroSesion> {
       });
     }
   }
-  Future<void> _guardarUsuario() async{
-    if(usuario.text.isEmpty){
-          ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Ingresá un nombre de usuario')),
-    );
-    return;
-  }
-    if(correo.text.isEmpty){
-          ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Ingresá un correo electrónico')),
-    );
-    return;
-  }
-    if(contra.text.isEmpty){
-          ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Ingresá una contraseña')),
-    );
-    return;
-  }
-    if (fechaNacimientoSeleccionada == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Seleccioná una fecha de nacimiento')),
-    );
-    return;
+
+  Future<void> _guardarUsuario() async {
+    if (usuario.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ingresá un nombre de usuario')),
+      );
+      return;
     }
-    if(generoSeleccionado==null){
-          ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Seleccioná un género')),
-    );
-    return;
-  }
-  try {
-    await AuthService().registrarUsuario(
-      nombre: usuario.text,
-      email: correo.text,
-      password: contra.text,
-      genero: generoSeleccionado!,
-      fechaNacimiento: fechaNacimientoSeleccionada!,
-    );
+    if (correo.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ingresá un correo electrónico')),
+      );
+      return;
+    }
+    if (contra.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Ingresá una contraseña')));
+      return;
+    }
+    if (fechaNacimientoSeleccionada == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Seleccioná una fecha de nacimiento')),
+      );
+      return;
+    }
+    if (generoSeleccionado == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Seleccioná un género')));
+      return;
+    }
+    try {
+      await AuthService().registrarUsuario(
+        nombre: usuario.text,
+        email: correo.text,
+        password: contra.text,
+        genero: generoSeleccionado!,
+        fechaNacimiento: fechaNacimientoSeleccionada!,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Usuario registrado correctamente')),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error al registrar: $e')),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usuario registrado correctamente')),
+      );
+      Navigator.pushNamed(context, 'IniciarSesion');
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error al registrar: $e')));
 
-    print('ERROR AL REGISTRAR: $e');
+      print('ERROR AL REGISTRAR: $e');
+    }
   }
 }
-}
-
