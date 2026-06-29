@@ -1,5 +1,6 @@
 // lib/src/pages/home_page.dart
 import 'dart:io';
+import 'package:app_music/src/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/menu_provider.dart';
@@ -21,6 +22,7 @@ class _MyHomePageState extends State<HomePage> {
       context.read<PlaylistProvider>().cargarPlaylists();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     // Escuchamos las playlists creadas
@@ -50,8 +52,23 @@ class _MyHomePageState extends State<HomePage> {
       actions: [
         IconButton(
           icon: const Icon(Icons.logout_outlined, size: 40),
-          onPressed: () {
-            Navigator.pop(context);
+          onPressed: () async {
+            try {
+              await AuthService().cerrarSesion();
+
+              if (!mounted) return;
+
+              Navigator.pushNamed(context, '/');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Sesion cerrada exitosamente')),
+              );
+            } catch (e) {
+              if (!mounted) return;
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error al cerrar sesión: $e')),
+              );
+            }
           },
         ),
       ],

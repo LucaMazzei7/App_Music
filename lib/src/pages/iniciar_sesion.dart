@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import '/src/services/auth_service.dart';
 
@@ -35,6 +34,7 @@ class IniciarSesion extends State<InicioSesion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: true,
         title: const Text(
           'Iniciar Sesion',
           style: TextStyle(
