@@ -15,6 +15,13 @@ class HomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PlaylistProvider>().cargarPlaylists();
+    });
+  }
+  @override
   Widget build(BuildContext context) {
     // Escuchamos las playlists creadas
     final playlistProvider = context.watch<PlaylistProvider>();

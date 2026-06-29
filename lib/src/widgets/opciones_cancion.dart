@@ -86,24 +86,26 @@ class OpcionesCancion {
                           return ListTile(
                             title: Text(pl.nombre),
                             leading: Icon(Icons.music_note, color: Theme.of(context).colorScheme.primary),
-                            onTap: () {
-                              // 1. Guardamos el resultado de la operación (true o false)
-                              bool seAgrego = pProvider.addCancionAPlaylist(pl.id, cancion);
+                            // 1. Convertimos este onTap en async
+                            onTap: () async {
+                              // 2. Le clavamos el await para esperar la respuesta de Firebase
+                              bool seAgrego = await pProvider.addCancionAPlaylist(pl.id, cancion);
                               
+                              if (!context.mounted) return;
                               Navigator.pop(context); // Cierra el sub-menú
 
                               if (seAgrego) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Añadida a "${pl.nombre}"'),
-                                    backgroundColor: const Color.fromARGB(255, 237, 221, 184), // fondo cremita de éxito
+                                    backgroundColor: const Color.fromARGB(255, 46, 125, 50), // Cambié a verde sutil para que combine con éxito
                                   ),
                                 );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('"${cancion['title']}" ya está añadida a esta playlist'),
-                                    backgroundColor: Colors.amber[800], // fondo naranja de advertencia
+                                    backgroundColor: Colors.amber[800], 
                                   ),
                                 );
                               }

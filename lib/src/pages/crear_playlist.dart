@@ -72,21 +72,19 @@ class _PlaylistState extends State<Playlist> {
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: () {
+              onPressed: () async { // <-- 1. Agregar 'async' acá
                 if (_nameController.text.isNotEmpty) {
-                  // Envia los datos al Provider (pasamos null en la ruta de imagen por ahora)
-                 final nuevaPlaylist = playlistProvider.crearPlaylist(_nameController.text, null);
                   
-                  // Limpia el campo de texto
+                  // 2. Agregar 'await' acá
+                 final nuevaPlaylist = await playlistProvider.crearPlaylist(_nameController.text, null);
+                  
                   _nameController.clear();
                   
-                  // Notificación visual de éxito
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('¡Playlist creada con éxito!')),
                   );
 
-                  // Enviar el ID y nombre de la nueva playlist a la página de canciones para agregar canciones
-                  Navigator.pushNamed(context, 'Canciones', arguments: {'id': nuevaPlaylist.id, 'nombre': nuevaPlaylist.nombre,'estado':'crear_play'}); // 
+                  Navigator.pushNamed(context, 'Canciones', arguments: {'id': nuevaPlaylist.id, 'nombre': nuevaPlaylist.nombre,'estado':'crear_play'});
                 }
               },
               

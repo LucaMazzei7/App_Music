@@ -161,15 +161,14 @@ Future<void> _subirArchivoLocal() async {
     return cancionesSeleccionadas.contains(cancion);
   }
 
-  void finalizar() {
+  void finalizar() async { // <-- Le agregamos async acá
     final provider = context.read<PlaylistProvider>();
-
+    List<Future<bool>> operaciones = [];
     for (final cancion in cancionesSeleccionadas) {
-      provider.addCancionAPlaylist(
-        playlistId,
-        cancion,
-      );
+      operaciones.add(provider.addCancionAPlaylist(playlistId, cancion));
     }
+    await Future.wait(operaciones);
+    if (!mounted) return;
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     if (estado == 'crear_play') {
       Navigator.pop(context);
@@ -179,7 +178,6 @@ Future<void> _subirArchivoLocal() async {
 
   @override
   Widget build(BuildContext context) {
-    // 4. COMBINAMOS LAS LISTAS: Mostramos las que subes localmente + las de prueba
     final listaCompleta = [...cancionesLocales, ...cancionesDePrueba];
 
     return Scaffold(
@@ -192,7 +190,6 @@ Future<void> _subirArchivoLocal() async {
           )
         ],
       ),
-      // 5. MODIFICAMOS EL BODY: Usamos un Column para poner el botón arriba y la lista abajo
       body: Column(
         children: [
           // --- BOTÓN DE SUBIR ARCHIVO ---
