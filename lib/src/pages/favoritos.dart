@@ -46,7 +46,14 @@ class Favoritos extends StatelessWidget {
                     child: ListTile(
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
+                        child: (cancion['image'] == null || cancion['image']!.isEmpty)
+                            ? Container(
+                                width: 45,
+                                height: 45,
+                                color: Colors.grey[800],
+                                child: const Icon(Icons.music_note, color: Colors.white24),
+                              )
+                          : Image.network(
                           cancion['image']!,
                           width: 45,
                           height: 45,

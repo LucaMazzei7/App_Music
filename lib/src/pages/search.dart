@@ -138,7 +138,14 @@ class _SearchState extends State<Search> {
                             contentPadding: EdgeInsets.zero,
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
+                                child: (cancion['image'] == null || cancion['image']!.isEmpty)
+                                  ? Container(
+                                      width: 50,
+                                      height: 50,
+                                      color: Colors.grey[800],
+                                      child: const Icon(Icons.music_note, color: Colors.white24),
+                                    )
+                                : Image.network(
                                 cancion['image']!,
                                 width: 50,
                                 height: 50,
@@ -201,6 +208,7 @@ class _SearchState extends State<Search> {
                                 titulo: cancion['title']!,
                                 artista: cancion['artist']!,
                                 imagen: cancion['image']!,
+                                url: cancion['url'] ?? '',
                               );
                             },
                           );

@@ -117,14 +117,29 @@ class VerPlaylist extends StatelessWidget {
             itemBuilder: (context, index) {
               final cancion = playlist.canciones[index];
               return ListTile(
-                leading: Image.network(
-                  cancion['image']!,
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
-                ), 
-
+                
+leading: (cancion['image'] == null || cancion['image']!.isEmpty)
+    ? Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.grey[800],
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: const Icon(Icons.music_note, color: Colors.white24),
+      )
+    : Image.network(
+        cancion['image']!,
+        width: 60,
+        height: 60,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          width: 60,
+          height: 60,
+          color: Colors.grey[800],
+          child: const Icon(Icons.broken_image, color: Colors.white24),
+        ),
+      ),
                 title: Text(
                   cancion['title']!,
                   softWrap: true,
@@ -184,6 +199,7 @@ class VerPlaylist extends StatelessWidget {
                     titulo: cancion['title']!,
                     artista: cancion['artist']!,
                     imagen: cancion['image']!,
+                    url: cancion['url'] ?? '',
                   );
                 }
               );

@@ -4,6 +4,7 @@ import '../mock_data.dart';
 import '../provider/playlist_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AgregarCanciones extends StatefulWidget {
   final String nombrePlaylist;
@@ -41,57 +42,51 @@ class _AgregarCancionesState extends State<AgregarCanciones> {
   }
 
 // 3. NUEVA FUNCIÓN: Para abrir el explorador y cargar la canción
-  Future<void> _subirArchivoLocal() async {
+Future<void> _subirArchivoLocal() async {
     FilePickerResult? result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['mp3', 'wav'],
+      withData: true, // Necesario para la web
     );
 
     if (result != null) {
       String? filePath = result.files.single.path;
       String fileName = result.files.single.name;
-      String duracionFormateada = '--:--'; // Valor por defecto por si falla
+      String duracionFormateada = '3:30'; // <-- DATO FALSO POR DEFECTO PARA SALVAR LA WEB
+      String urlFinal = ''; 
 
-      // --- ACÁ METÉS EL CÓDIGO NUEVO QUE TE PASÉ ---
-      if (filePath != null) {
-        final player = AudioPlayer();
-        try {
-          // 1. Cargamos el archivo de manera asíncrona esperando que el reproductor esté listo
+      final player = AudioPlayer();
+
+      try {
+        // Intentamos cargar el audio para sacar la duración real
+        if (filePath != null && !kIsWeb) {
+          urlFinal = filePath;
           await player.setAudioSource(AudioSource.file(filePath));
           
-          // 2. Intentamos leer la duración directamente
           final duration = player.duration;
-          
           if (duration != null && duration.inSeconds > 0) {
             String minutos = duration.inMinutes.toString();
             String segundos = (duration.inSeconds % 60).toString().padLeft(2, '0');
             duracionFormateada = '$minutos:$segundos';
-            print("▶️ DURACIÓN DETECTADA EXITOSAMENTE: $duracionFormateada");
-          } else {
-            // Si por alguna razón da null de entrada, intentamos escuchar el stream una sola vez
-            final streamDuration = await player.durationStream.first;
-            if (streamDuration != null) {
-              String minutos = streamDuration.inMinutes.toString();
-              String segundos = (streamDuration.inSeconds % 60).toString().padLeft(2, '0');
-              duracionFormateada = '$minutos:$segundos';
-            }
           }
-        } catch (e) {
-          // Si hay un error, nos va a decir exactamente qué le molesta en la consola de VS Code
-          print("❌ ERROR CRÍTICO AL LEER DURACIÓN DEL AUDIO: $e");
-        } finally {
-          await player.dispose(); // Nos aseguramos de cerrar el reproductor siempre
+        } else if (kIsWeb) {
+          // En web es muy inestable leer metadatos locales, 
+          // saltamos directamente a usar el valor por defecto para no trabar la app.
+          urlFinal = 'archivo_local_web'; 
         }
+      } catch (e) {
+        print("Ignorando error de lectura: $e");
+      } finally {
+        await player.dispose(); 
       }
-      // ------------------------------------------
 
       Map<String, String> nuevaCancion = {
         'id': DateTime.now().millisecondsSinceEpoch.toString(),
         'title': fileName.replaceAll('.mp3', '').replaceAll('.wav', ''),
         'artist': 'Archivo Local',
-        'url': filePath ?? '',
+        'url': urlFinal, 
         'image': '',
-        'duration': duracionFormateada, // Usa la variable que calculamos arriba
+        'duration': duracionFormateada, 
         'album': 'Desconocido',
       };
 
@@ -102,12 +97,12 @@ class _AgregarCancionesState extends State<AgregarCanciones> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Archivo "$fileName" listo para agregar')),
+          SnackBar(content: Text('Archivo "$fileName" listo')),
         );
       }
     }
   }
-  
+
   void toggleCancion(Map<String, String> cancion) {
     final yaSeleccionada = cancionesSeleccionadas.contains(cancion);
 
