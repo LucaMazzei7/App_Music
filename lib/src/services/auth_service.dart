@@ -55,7 +55,7 @@ class AuthService {
         password: contrasena.trim(),
       );
       return true;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       return false;
     }
   }

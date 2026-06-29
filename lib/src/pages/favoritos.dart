@@ -1,3 +1,4 @@
+
 // lib/src/pages/favoritos.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Importante para escuchar el provider
