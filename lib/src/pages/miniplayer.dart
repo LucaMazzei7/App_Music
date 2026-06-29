@@ -1,7 +1,7 @@
 // widgets/mini_player.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../provider/ver_playlist_provider.dart';
+import '../provider/reproducir_playlist.dart';
 
 class MiniPlayer extends StatelessWidget {
   const MiniPlayer({super.key});

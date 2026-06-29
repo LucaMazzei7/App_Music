@@ -1,9 +1,10 @@
 // lib/src/pages/search.dart
 import 'package:flutter/material.dart';
 import '../mock_data.dart';
-import '../provider/ver_playlist_provider.dart';
+import '../provider/reproducir_playlist.dart';
 import '../widgets/opciones_cancion.dart';
 import 'package:provider/provider.dart';
+import '../provider/menu_provider.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -46,32 +47,22 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_outlined, size: 40),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-        title: const Text(
-          'Buscar',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: SafeArea(
+    return SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              AppBar(
+            title: const Text('Buscar', style: TextStyle(fontWeight: FontWeight.bold)),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            // Agregamos la flecha manual conectada al MenuProvider
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.read<MenuProvider>().retroceder(),
+            ),
+          ),
               const SizedBox(height: 16),
 
               // Barra de entrada de texto
@@ -116,7 +107,7 @@ class _SearchState extends State<Search> {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 255, 255, 255),
+                  color: Color.fromARGB(255, 13, 111, 21),
                 ),
               ),
               const SizedBox(height: 12),
@@ -159,7 +150,7 @@ class _SearchState extends State<Search> {
                               cancion['title']!,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: Color.fromARGB(255, 255, 255, 255),
+                                color: Color.fromARGB(255, 53, 61, 54),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -188,8 +179,9 @@ class _SearchState extends State<Search> {
                                   ),
                                   onPressed: () =>
                                       OpcionesCancion.mostrarOpciones(
-                                        context,
-                                        cancion,
+                                        context: context,
+                                        cancion: cancion,
+                                        origen: 'search'
                                       ),
                                 ),
                               ],
@@ -210,7 +202,6 @@ class _SearchState extends State<Search> {
             ],
           ),
         ),
-      ),
     );
   }
 }

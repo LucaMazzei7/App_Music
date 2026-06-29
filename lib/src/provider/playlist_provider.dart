@@ -39,22 +39,52 @@ class PlaylistProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Modificá este método dentro de PlaylistProvider:
-bool addCancionAPlaylist(String playlistId, Map<String, String> cancion) {
-  final index = _playlists.indexWhere((p) => p.id == playlistId);
+  bool addCancionAPlaylist(String playlistId, Map<String, String> cancion) {
+    final index = _playlists.indexWhere((p) => p.id == playlistId);
   
-  if (index != -1) {
-    // Verificamos si la canción YA EXISTE en esa playlist específica
-    bool yaExiste = _playlists[index].canciones.any((c) => c['id'] == cancion['id']);
+    if (index != -1) {
+      // Verificamos si la canción YA EXISTE en esa playlist específica
+      bool yaExiste = _playlists[index].canciones.any((c) => c['id'] == cancion['id']);
     
-    if (yaExiste) {
-      return false; // No la agrega y retorna false
-    } else {
-      _playlists[index].canciones.add(cancion);
-      notifyListeners(); // Notifica el cambio a la Home
-      return true; // Retorna true porque se agregó con éxito
+      if (yaExiste) {
+        return false; // No la agrega y retorna false
+      } else {
+        _playlists[index].canciones.add(cancion);
+        notifyListeners(); // Notifica el cambio a la Home
+        return true; // Retorna true porque se agregó con éxito
+      }
+    }
+    return false;
+  }
+
+  // Eliminar una canción de una playlist específica
+  void removeCancionDePlaylist(String playlistId, String cancionId) {
+    //buscamos el índice de la playlist
+    final index = _playlists.indexWhere((p) => p.id == playlistId);
+
+    if (index != -1) {
+      //removemos la canción que coincida con el id provisto
+      _playlists[index].canciones.removeWhere((cancion) => cancion['id'] == cancionId);
+      
+      //notificamos a todos los widgets para que se redibujen (y desaparezca la canción de la pantalla)
+      notifyListeners();
     }
   }
-  return false;
-}
+
+  void actualizarPortada (String playlistId, String? newPortada) {
+    final index = _playlists.indexWhere((p) => p.id == playlistId);
+    if (index != -1) {
+      _playlists[index] = PlaylistModel(
+        id: _playlists[index].id, 
+        nombre: _playlists[index].nombre, 
+        canciones: _playlists[index].canciones, 
+        imagePath: newPortada);
+    }
+  }
+
+  List<Map<String, String>> getCanciones (String playlistId) {
+    final index = _playlists.indexWhere((p) => p.id == playlistId);
+    return _playlists[index].canciones;
+  }
+
 }

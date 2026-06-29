@@ -4,9 +4,17 @@ import '../provider/favoritos_provider.dart';
 import '../provider/playlist_provider.dart';
 
 class OpcionesCancion {
+  // Función simulada para el menú de opciones (Search / Playlist)
+  // Pasamos el origen ('search', 'favoritos'
+  //si estoy en search no me puede salir la opcion eliminar y si estoy en favoritos no me puede salir la opcion de agregar a favortios
+  // Si se borra de una playlist, pasamos también su playlistId
 
-// Función simulada para el menú de opciones (Favoritos / Playlist)
-  static void mostrarOpciones(BuildContext context, Map<String, String> cancion) {
+  static void mostrarOpciones({
+    required BuildContext context, 
+    required Map<String, String> cancion,
+    required String origen,
+    String? playlistId,
+  }) {
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF282828),
@@ -18,6 +26,8 @@ class OpcionesCancion {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+
+              //muestra info de la cancion
               ListTile(
                 leading: ClipRRect(
                   borderRadius: BorderRadius.circular(4),
@@ -40,28 +50,34 @@ class OpcionesCancion {
                 subtitle: Text(cancion['artist']!, style: const TextStyle(color: Colors.grey)),
               ),
               const Divider(color: Colors.white10),
-              ListTile(
-                leading: Icon(
-                  Provider.of<FavoritosProvider>(context, listen: false).esFavorito(cancion['id']!)
+
+
+              //opcion de agregar a favoritos
+
+              // 1. CONDICIÓN: Si vengo de favoritos, NO muestro esta opción
+              if (origen != 'favoritos')
+                ListTile(
+                  leading: Icon(
+                    Provider.of<FavoritosProvider>(context, listen: false).esFavorito(cancion['id']!)
                       ? Icons.favorite
                       : Icons.favorite_border,
                   color:Theme.of(context).colorScheme.primary,
-                ),
-                title: const Text('Añadir a Favoritos'),
+                  ),
+                title: const Text('Añadir a Favoritos',style: TextStyle(color: Colors.grey)),
                 onTap: () {
                   Navigator.pop(context);
-                  
-                  // LLAMADA REAL AL PROVIDER:
                   Provider.of<FavoritosProvider>(context, listen: false).agregarAFavoritos(cancion);
-                  
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('"${cancion['title']}" añadida a Favoritos')),
                   );
                 },
               ),
+
+
+              //opcion de agregar a otra playlist
               ListTile(
                 leading: const Icon(Icons.playlist_add, color: Colors.white),
-                title: const Text('Añadir a una Playlist'),
+                title: const Text('Añadir a una Playlist', style: TextStyle(color: Colors.grey)),
                 onTap: () {
                   Navigator.pop(context); // Cierra el primer menú
                   
@@ -114,6 +130,39 @@ class OpcionesCancion {
                     },
                   );
                 }
+              ),
+
+
+              //opcion de eliminar
+
+              // 2. CONDICIÓN: Si vengo de 'search', NO muestro la opción de eliminar. 
+              // Si vengo de cualquier otro lado, se muestra dinámicamente.
+              if (origen != 'search')
+                ListTile(
+                  leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                  title: Text(
+                    origen == 'favoritos' ? 'Eliminar de Favoritos' : 'Eliminar de esta Playlist',
+                    style: const TextStyle(color: Colors.redAccent),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    
+                    if (origen == 'favoritos') {
+                      Provider.of<FavoritosProvider>(context, listen: false).eliminarDeFavoritos(cancion['id']!); 
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('"${cancion['title']}" eliminada de Favoritos')),
+                      );
+                    } else if (playlistId != null) {
+                      // Llamada al provider para remover de la playlist actual
+                      // NOTA: Asegúrate de tener este método implementado en tu PlaylistProvider
+                      Provider.of<PlaylistProvider>(context, listen: false)
+                          .removeCancionDePlaylist(playlistId, cancion['id']!);
+                          
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('"${cancion['title']}" eliminada de la playlist')),
+                      );
+                    }
+                },
               )
             ]
           )

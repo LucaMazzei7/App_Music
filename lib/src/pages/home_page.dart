@@ -20,23 +20,33 @@ class _MyHomePageState extends State<HomePage> {
     final playlistProvider = context.watch<PlaylistProvider>();
     final listaPlaylists = playlistProvider.playlists;
 
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: Column(
+    //al implementar el manu y la navigation page no devolvemos el scaffold, ni appbar pues ya lo creamos en navigation page y no hay que duplicarlos
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // COMPONENTE: AppBar
+          AppBar(
+          // IMPORTANTE: Mostramos la flecha de atrás nativa si no estamos en Home
+            automaticallyImplyLeading: false, 
+          title: const Text('Inicio', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout_outlined, size: 40),
+              onPressed: () => Navigator.pop(context), 
+            ),
+          ],
+        ),
           const SizedBox(height: 25),
-          _listaMenuOriginal(),
+          _listaMenu(),
           const Divider(height: 1),
           _buildTituloPlaylists(),
           // Sección Inferior: Lista de Playlists que reacciona en tiempo real
           _buildSeccionPlaylists(listaPlaylists, playlistProvider),
         ],
-      ),
     );
   }
-
-  // COMPONENTE: AppBar
+/*
+  // COMPONENTE: AppBar lo borro pues ahora se crea solo en la navigation page
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
@@ -58,6 +68,7 @@ class _MyHomePageState extends State<HomePage> {
       ),
     );
   }
+  */
 
   // COMPONENTE: Sub-Título de Playlists
   Widget _buildTituloPlaylists() {
@@ -72,7 +83,7 @@ class _MyHomePageState extends State<HomePage> {
 
   // COMPONENTE: Contenedor Expandido de Playlists
   Widget _buildSeccionPlaylists(
-    List<dynamic> listaPlaylists,
+    List<PlaylistModel> listaPlaylists,
     PlaylistProvider playlistProvider,
   ) {
     return Expanded(
@@ -134,20 +145,50 @@ class _MyHomePageState extends State<HomePage> {
       ),
       onTap: () {
         // Lógica para abrir los detalles de la playlist
-        //con navigator push vos le decis que pantalla exactamente abrir al navegador cuando tocas el boton
-        //como tenemos que abrir una playlist en especifico, usamos pushnamed que no construye una pantalla arriba, sino que busca en el archivo de rutas y abre una asociada
-        Navigator.pushNamed(
-          context,
-          'ver_playlist',
-          //le enviamos como argumento que playlist es la que tocamos para que sepa de cual tiene que cargar info
-          arguments: playlist.id,
-        );
+        context.read<MenuProvider>().abrirPlaylist(playlist.id);
       },
     );
   }
 
+  Widget _listaMenu(){
+    return Column(
+    children: [
+      
+      ListTile(
+        leading: Icon(
+                    Icons.add,
+                    color: Theme.of(context).colorScheme.primary,
+                  ), // El "+" con el verde de tu app
+        title: const Text("Crear playlist"),
+        trailing: const Icon(
+              Icons.arrow_forward_ios_outlined,
+              color: Color.fromARGB(255, 179, 24, 24),
+              size: 16,
+            ),
+        onTap: () => Navigator.pushNamed(context, 'Playlist'),
+      ),
+      const Divider(height: 1),
+      ListTile(
+        leading: Icon(
+                    Icons.favorite,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+        title: const Text("Favoritos"),
+        trailing: const Icon(
+              Icons.arrow_forward_ios_outlined,
+              color: Color.fromARGB(255, 179, 24, 24),
+              size: 16,
+            ),
+        onTap: () => context.read<MenuProvider>().abrirFavoritos(),
+      ),
+    ],
+  );
+  }
+/*
+borro estas dos que crean las opciones del menu favoritos o crear playlist ya que como controlo las cosas con el menu provider y no leo el json para las opciones directamente
+//hago menu provider.abrir favoritos o pushnamed a la ruta usando el routes.dart
   // LÓGICA ASÍNCRONA: Menú de Opciones
-  Widget _listaMenuOriginal() {
+  Widget _listaMenu() {
     return FutureBuilder(
       future: menuProvider.cargarData(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -166,7 +207,7 @@ class _MyHomePageState extends State<HomePage> {
       },
     );
   }
-
+  
   // MAPEO: Elementos del Menú de Opciones
   List<Widget> _listaItems(List<dynamic> data) {
     return data.map((opt) {
@@ -218,4 +259,6 @@ class _MyHomePageState extends State<HomePage> {
       );
     }).toList();
   }
+}
+*/
 }
