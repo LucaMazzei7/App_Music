@@ -159,8 +159,10 @@ class PlaylistProvider extends ChangeNotifier {
       // Actualizamos la playlist local para que se vea el cambio en la app
       _playlists[index] = _playlists[index].copyWith(nombre: nombreLimpio);
 
-      // Avisamos a las pantallas que usan este provider
-      notifyListeners();
+      // CAMBIO DE SEGURIDAD ACÁ: Avisamos a las pantallas SOLO si el provider sigue activo
+      if (hasListeners) {
+        notifyListeners();
+      }
 
       return true;
     } catch (e) {

@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'src/app.dart';
 import 'package:provider/provider.dart';
-// Importamos tus dos providers centralizados
 import 'src/provider/favoritos_provider.dart';
 import 'src/provider/playlist_provider.dart';
 import 'src/provider/menu_provider.dart';
