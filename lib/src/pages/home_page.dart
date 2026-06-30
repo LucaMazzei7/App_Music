@@ -135,7 +135,7 @@ class _MyHomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _mostrarDialogoCambiarNombre(
+Future<void> _mostrarDialogoCambiarNombre(
     PlaylistModel playlist,
     PlaylistProvider playlistProvider,
   ) async {
@@ -157,15 +157,13 @@ class _MyHomePageState extends State<HomePage> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () {
+                // Cerramos devolviendo el texto limpio
                 Navigator.pop(dialogContext, nombreController.text.trim());
-                context.read<MenuProvider>().retroceder();
               },
               child: const Text('Guardar'),
             ),
@@ -174,19 +172,25 @@ class _MyHomePageState extends State<HomePage> {
       },
     );
 
-    nombreController.dispose();
-
+    // PASO 1: Si el usuario canceló o dejó vacío, liberamos el controlador y cortamos acá
     if (nuevoNombre == null || nuevoNombre.isEmpty) {
+      nombreController.dispose();
       return;
     }
 
+    // PASO 2: Hacemos la petición asíncrona a Firebase
     final ok = await playlistProvider.cambiarNombrePlaylist(
       playlistId: playlist.id,
       nuevoNombre: nuevoNombre,
     );
 
+    // PASO 3: RECIÉN ACÁ liberamos el controlador, cuando ya terminó todo el proceso
+    nombreController.dispose();
+
+    // PASO 4: Control de seguridad estricto antes de tocar la interfaz
     if (!mounted) return;
 
+    // Mostramos el SnackBar usando el ScaffoldMessenger correcto
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
