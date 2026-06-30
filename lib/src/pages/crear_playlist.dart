@@ -36,9 +36,7 @@ class _PlaylistState extends State<Playlist> {
     if (status.isGranted || status.isLimited) {
       // Si ya tiene el permiso total de antes, entra directo a la galería
       await _ejecutarGaleriaOriginal();
-    } else if (status.isPermanentlyDenied) {
-      if (mounted) _mostrarDialogoDeAjustes();
-    } else if (status.isDenied) {
+    } else  {
       if (mounted) _mostrarPreCartelPersonalizado();
     }
   }
@@ -224,11 +222,11 @@ class _PlaylistState extends State<Playlist> {
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_nameController.text.isNotEmpty) {
                   // MODIFICADO: Ahora pasamos la variable `imagePath` real en lugar de null
-                  final nuevaPlaylist = playlistProvider.crearPlaylist(
-                    _nameController.text, 
+                  final nuevaPlaylist = await playlistProvider.crearPlaylist(
+                    _nameController.text.trim(), 
                     imagePath,
                   );
                   
@@ -236,12 +234,16 @@ class _PlaylistState extends State<Playlist> {
                   setState(() {
                     imagePath = null; // Reinicia la imagen tras guardar
                   });
-                  
-                  // Notificación visual de éxito
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('¡Playlist creada con éxito!')),
+                  if (mounted){
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                     SnackBar(content: const Text('¡Playlist creada con éxito!'),
+                     backgroundColor: Theme.of(context).colorScheme.surface ,),
+                     
                   );
-
+                  }                // Notificación visual de éxito
+                  
+                  if (!context.mounted) return;
                   // Enviar el ID y nombre de la nueva playlist a la página de canciones para agregar canciones
                   Navigator.pushNamed(context, 'Canciones', arguments: {'id': nuevaPlaylist.id, 'nombre': nuevaPlaylist.nombre,'estado':'crear_play'}); // 
                 }

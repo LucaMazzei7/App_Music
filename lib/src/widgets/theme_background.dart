@@ -23,7 +23,7 @@ class ThemeBackground extends StatelessWidget {
                 fit: BoxFit.cover,
                 // Le da una opacidad oscura en modo noche para que no tape las letras
                 colorFilter: ColorFilter.mode(
-                  Colors.black.withOpacity(themeProvider.isDarkMode ? 0.65 : 0.15),
+                  Colors.black.withValues(alpha:0.65),
                   BlendMode.darken,
                 ),
               )

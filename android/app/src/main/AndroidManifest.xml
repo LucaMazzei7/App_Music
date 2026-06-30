@@ -1,10 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <!-- NUEVAS LÍNEAS AGREGADAS AQUÍ -->
+<manifest  xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- Permiso clásico para dispositivos con Android 12 o inferior -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    
+    <!-- 🔥 PERMISOS GRANULARES OBLIGATORIOS PARA ANDROID 13+ (Hacen que funcione Permission.photos) -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
-
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+<uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <application
         android:label="app_music"
         android:name="${applicationName}"

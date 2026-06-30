@@ -27,3 +27,4 @@ class FavoritosProvider extends ChangeNotifier {
     notifyListeners(); // Esto actualiza la lista visual al instante
   }
 }
+

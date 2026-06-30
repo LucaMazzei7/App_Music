@@ -95,6 +95,32 @@ class ThemeModifierProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  //Recibe el color extraído por el ReproductorProvider
+  // y genera una paleta equilibrada de 4 tonos armónicos basados en él.
+  void actualizarColorSintonizado(Color? nuevoColor) {
+    if (nuevoColor == null) return;
+
+    // Generamos variaciones de brillo y opacidad para abastecer a tu algoritmo de luminancia
+    final colorFondoSimulado = Color.alphaBlend(nuevoColor.withValues(alpha: 0.1), const Color(0xFF1F1F1F));
+    final colorIntermedio1 = Color.alphaBlend(nuevoColor.withValues(alpha: 0.4), Colors.grey);
+    final colorIntermedio2 = nuevoColor; 
+    final colorResaltado = Color.alphaBlend(Colors.white.withValues(alpha: 0.3), nuevoColor);
+
+    // Creamos la paleta dinámica instantánea
+    _currentPalette = CustomPalette(
+      name: 'Sintonía',
+      colors: [
+        colorFondoSimulado,
+        colorIntermedio1,
+        colorIntermedio2,
+        colorResaltado,
+      ],
+    );
+
+    // Avisamos a la UI para que haga la magia del cambio de color
+    notifyListeners();
+  }
+
   /// ALGORITMO: Distribuye los colores dinámicamente según el Brillo (Luminance)
   ThemeData get currentTheme {
     // Ordenamos una copia de los colores de la paleta de menor a mayor brillo

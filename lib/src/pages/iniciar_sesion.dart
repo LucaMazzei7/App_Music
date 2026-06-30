@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui'; // Obligatorio para usar ImageFilter (el difuminado)
 import 'package:provider/provider.dart';
 import '../provider/theme_provider.dart';
-
+import '../services/auth_service.dart';
 class InicioSesion extends StatefulWidget {
   const InicioSesion({super.key, required this.title});
   final String title;
@@ -20,10 +20,17 @@ class InicioSesion extends StatefulWidget {
 }
 
 class IniciarSesion extends State<InicioSesion> {
+  List <dynamic> usuarios=[];
+  final TextEditingController correoController= TextEditingController();
+  final TextEditingController contraController= TextEditingController();
   final TextEditingController _iniciarSesion = TextEditingController();
+  @override
   void initState() {
     super.initState();
-    _iniciarSesion.text = ''; // Inicializamos vacío para un login real
+    _iniciarSesion.text = 'valor inicial del input'; // Inicializamos vacío para un login real
+    _iniciarSesion.addListener(() {
+      print('el valor del input es: ${_iniciarSesion.text}');
+    });
   }
 
   @override
@@ -115,6 +122,7 @@ class IniciarSesion extends State<InicioSesion> {
   // Inputs con bordes estilizados usando el color de acento
   Widget _crearEmail(Color activeColor) {
     return TextField(
+      controller: correoController,
       keyboardType: TextInputType.emailAddress,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
@@ -142,6 +150,7 @@ class IniciarSesion extends State<InicioSesion> {
 
   Widget _crearPassword(Color activeColor) {
     return TextField(
+      controller: contraController,
       obscureText: true,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
@@ -174,8 +183,25 @@ class IniciarSesion extends State<InicioSesion> {
         shape: const StadiumBorder(),
         elevation: 4,
       ),
-      onPressed: () {
-        Navigator.pushNamed(context, 'Navigator');
+      onPressed: () async {
+
+        if (correoController.text.isNotEmpty && contraController.text.isNotEmpty) {
+    // Mostramos un indicador de carga estético sobre el vidrio si deseas
+    final exito = await AuthService().iniciarSesion(
+      correo: correoController.text.trim(),
+      contrasena: contraController.text.trim(),
+    );
+
+    if (exito) {
+      if (mounted) Navigator.pushNamed(context, 'Navigator');
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usuario o contraseña erróneo')),
+        );
+      }
+    }
+  }
       },
       child: Text(
         'LOGIN', 

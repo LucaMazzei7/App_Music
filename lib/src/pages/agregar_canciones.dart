@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart'; 
 import '../mock_data.dart';
 import '../provider/playlist_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 class AgregarCanciones extends StatefulWidget {
   final String nombrePlaylist;
   final String? portada;
@@ -19,29 +23,28 @@ class AgregarCanciones extends StatefulWidget {
 }
 
 class _AgregarCancionesState extends State<AgregarCanciones> {
-  //canciones que el usuario va agregar a la playlist
   List<Map<String, String>> cancionesSeleccionadas = [];
-  
   //Lista local para guardar las canciones que el usuario sí puede agregar (que no estan ya en la playlist)
   List<Map<String, String>> cancionesFiltradas = [];
-  
+
   //canciones que da como resultado la barra de busqueda
   List<Map<String, String>> cancionesMostradas = [];
-
-  //Para limpiar el texto si es necesario
   final TextEditingController _searchController = TextEditingController();
+  String _query = ''; // Guarda el texto que escribe el usuario
+  //Para guardar temporalmente en la UI las canciones locales que vayas subiendo
+  List<Map<String, String>> cancionesLocales = []; 
 
   late String playlistId;
   late String nombrePlaylist;
   late String estado;
-
+ 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     playlistId = args['id'] as String;
     nombrePlaylist = args['nombre'] as String;
-    estado=args['estado'] as String; 
+    estado = args['estado'] as String;
 
     //Obtenemos las canciones que ya están en esta playlist desde el Provider
     final provider = context.read<PlaylistProvider>();
@@ -57,115 +60,166 @@ class _AgregarCancionesState extends State<AgregarCanciones> {
     cancionesMostradas = List.from(cancionesFiltradas);
   }
 
-  // NUEVO: Función para filtrar según lo que escriba el usuario
-  void _filtrarBusqueda(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        cancionesMostradas = List.from(cancionesFiltradas);
-      } else {
-        cancionesMostradas = cancionesFiltradas.where((cancion) {
-          final titulo = (cancion['title'] ?? '').toLowerCase();
-          final artista = (cancion['artist'] ?? '').toLowerCase();
-          final input = query.toLowerCase();
+// 3. NUEVA FUNCIÓN: Para abrir el explorador y cargar la canción
+Future<void> _subirArchivoLocal() async {
+    FilePickerResult? result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav'],
+      withData: true, // Necesario para la web
+    );
+
+    if (result != null) {
+      String? filePath = result.files.single.path;
+      String fileName = result.files.single.name;
+      String duracionFormateada = '3:30'; // <-- DATO FALSO POR DEFECTO PARA SALVAR LA WEB
+      String urlFinal = ''; 
+
+      final player = AudioPlayer();
+
+      try {
+        // Intentamos cargar el audio para sacar la duración real
+        if (filePath != null && !kIsWeb) {
+          urlFinal = filePath;
+          await player.setAudioSource(AudioSource.file(filePath));
           
-          return titulo.contains(input) || artista.contains(input);
-        }).toList();
+          final duration = player.duration;
+          if (duration != null && duration.inSeconds > 0) {
+            String minutos = duration.inMinutes.toString();
+            String segundos = (duration.inSeconds % 60).toString().padLeft(2, '0');
+            duracionFormateada = '$minutos:$segundos';
+          }
+        } else if (kIsWeb) {
+          // En web es muy inestable leer metadatos locales, 
+          // saltamos directamente a usar el valor por defecto para no trabar la app.
+          urlFinal = 'archivo_local_web'; 
+        }
+      } catch (e) {
+        print("Ignorando error de lectura: $e");
+      } finally {
+        await player.dispose(); 
       }
-    });
+
+      Map<String, String> nuevaCancion = {
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'title': fileName.replaceAll('.mp3', '').replaceAll('.wav', ''),
+        'artist': 'Archivo Local',
+        'url': urlFinal, 
+        'image': '',
+        'duration': duracionFormateada, 
+        'album': 'Desconocido',
+      };
+
+      setState(() {
+        cancionesLocales.add(nuevaCancion);
+        cancionesSeleccionadas.add(nuevaCancion);
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Archivo "$fileName" listo')),
+        );
+      }
+    }
   }
 
- void toggleCancion(Map<String, String> cancion) {
-  final yaSeleccionada = cancionesSeleccionadas.contains(cancion);
-  
-  setState(() {
-    if (yaSeleccionada) {
-      cancionesSeleccionadas.remove(cancion);
-    } else {
-      cancionesSeleccionadas.add(cancion);
-    }
-  });
-  
+  void toggleCancion(Map<String, String> cancion) {
+    final yaSeleccionada = cancionesSeleccionadas.contains(cancion);
 
-  if (yaSeleccionada) {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 3),
-        content: Text(
-          '"${cancion['title']}" se eliminó de la playlist',
+    setState(() {
+      if (yaSeleccionada) {
+        cancionesSeleccionadas.remove(cancion);
+      } else {
+        cancionesSeleccionadas.add(cancion);
+      }
+    });
+
+    if (yaSeleccionada) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 3),
+          content: Text('"${cancion['title']}" se eliminó de la playlist'),
         ),
-      ),
-    );
-  }  else {
-  ScaffoldMessenger.of(context)
-  ..hideCurrentSnackBar()
-  ..showSnackBar(
-    SnackBar(
-      duration: const Duration(seconds: 3),
-      behavior: SnackBarBehavior.floating,
-      content: Row(
-        children: [
-          Expanded(
-            child: Text(
-              'Agregaste "${cancion['title']}" a la playlist',
+      );
+    } else {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            content: Row(
+              children: [
+                Expanded(
+                  child: Text('Agregaste "${cancion['title']}" a la playlist'),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Color.fromARGB(255, 222, 6, 6)),
+                  onPressed: () {
+                    setState(() {
+                      cancionesSeleccionadas.remove(cancion);
+                    });
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        SnackBar(
+                          duration: const Duration(seconds: 3),
+                          content: Text('"${cancion['title']}" se eliminó de la playlist'),
+                        ),
+                      );
+                  },
+                ),
+              ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: Color.fromARGB(255, 222, 6, 6)),
-            onPressed: () {
-              setState(() {
-                cancionesSeleccionadas.remove(cancion);
-              });
-
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    duration: const Duration(seconds: 3),
-                    content: Text(
-                      '"${cancion['title']}" se eliminó de la playlist',
-                    ),
-                  ),
-                );
-            },
-          ),
-        ],
-      ),
-    ),
-  );
-}}
+        );
+    }
+  }
 
   bool estaSeleccionada(Map<String, String> cancion) {
     return cancionesSeleccionadas.contains(cancion);
   }
 
-  void finalizar() {
+  void finalizar() async { // <-- Le agregamos async acá
     final provider = context.read<PlaylistProvider>();
+    List<Future<bool>> operaciones = [];
     for (final cancion in cancionesSeleccionadas) {
-      provider.addCancionAPlaylist(
-        playlistId,
-        cancion,
-      );
+      operaciones.add(provider.addCancionAPlaylist(playlistId, cancion));
     }
+    await Future.wait(operaciones);
+    if (!mounted) return;
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    if (estado=='crear_play'){
-      Navigator.pop(context);
-    }
-    Navigator.pop(context);
+    if (estado == 'crear_play') {
+      Navigator.pushNamed(context, 'Navigator');
+    } else {
+    Navigator.pop(context);}
   }
 
-  // NUEVO: Limpieza del controlador al destruir el widget
-  @override
+  
+
+@override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
-  @override
+
+ @override
   Widget build(BuildContext context) {
+    // 1. Unimos todas las canciones disponibles
+    final todasLasCanciones = [...cancionesLocales, ...cancionesFiltradas];
+
+    // 2. FILTRADO DINÁMICO: Filtramos por título o artista (ignorando mayúsculas/minúsculas)
+    final listaFiltrada = todasLasCanciones.where((cancion) {
+      final titulo = (cancion['title'] ?? '').toLowerCase();
+      final artista = (cancion['artist'] ?? '').toLowerCase();
+      final busqueda = _query.toLowerCase();
+      return titulo.contains(busqueda) || artista.contains(busqueda);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Agregar canciones a la Playlist: $nombrePlaylist"),
+        title: Text("Agregar a: $nombrePlaylist"),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -173,92 +227,100 @@ class _AgregarCancionesState extends State<AgregarCanciones> {
           )
         ],
       ),
-
-      // NUEVO: Cambiamos el body a un Column para meter el buscador arriba
       body: Column(
         children: [
-          // NUEVO: El campo de texto para buscar
+          // --- BOTÓN DE SUBIR ARCHIVO ---
           Padding(
-            padding: const EdgeInsets.all(12.0),
-            key: const ValueKey('search_bar_padding'),
-            child: 
-            // Barra de entrada de texto
-              TextField(
-                controller: _searchController,
-                onChanged: _filtrarBusqueda,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 255, 255, 255),
-                ),
-                decoration: InputDecoration(
-                  hintText: '¿Qué querés escuchar?',
-                  hintStyle: const TextStyle(
-                    color: Color.fromARGB(255, 113, 113, 113),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Color.fromARGB(255, 113, 113, 113),
-                  ),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear, color: Colors.grey),
-                          onPressed: () {
-                            _searchController.clear();
-                            _filtrarBusqueda('');
-                          },
-                        )
-                      : null,
-                  filled: true,
-                  fillColor: const Color(0xFF242424),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
-                    borderSide: BorderSide.none,
-                  ),
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton.icon(
+              onPressed: _subirArchivoLocal,
+              icon: const Icon(Icons.upload_file),
+              label: const Text('Subir canción desde el dispositivo'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50), // Botón ancho
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
+            ),
           ),
-          
-          // El ListView ahora debe ir dentro de un Expanded para no romper el layout
+          // --- NUEVO: CAMPO DE BÚSQUEDA PREMIUM ---
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _query = value; // Al cambiar el texto, se refresca la lista filtrada
+                });
+              },
+              style: const TextStyle(color: Color.fromARGB(255, 81, 154, 79)),
+              decoration: InputDecoration(
+                hintText: 'Buscar canciones o artistas...',
+                hintStyle: TextStyle(color: Color.fromARGB(255, 81, 154, 79)),
+                prefixIcon: const Icon(Icons.search, color: Color.fromARGB(255, 81, 154, 79)),
+                suffixIcon: _query.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Color.fromARGB(255, 81, 154, 79)),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() { _query = ''; });
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface, // Fondo dinámico adaptable
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25), // Forma de cápsula limpia
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+          // --- LISTA DE CANCIONES ---
           Expanded(
-            child: cancionesMostradas.isEmpty
-                ? const Center(child: Text("No se encontraron canciones"))
-                : ListView.builder(
-                    itemCount: cancionesMostradas.length,
-                    itemBuilder: (context, index) {
-                      final cancion = cancionesMostradas[index];
+            child: ListView.builder(
+              itemCount: listaFiltrada.length,
+              itemBuilder: (context, index) {
+                final cancion = listaFiltrada[index];
 
-                      return ListTile(
-                        leading: (cancion['image'] == null || cancion['image']!.isEmpty)
-                            ? Container(
-                                width: 50,
-                                height: 50,
-                                color: Colors.grey[800],
-                                child: const Icon(Icons.music_note, color: Colors.white24),
-                              )
-                            : Image.network(
-                                cancion['image']!,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => Container(
-                                  width: 50,
-                                  height: 50,
-                                  color: Colors.grey[800],
-                                  child: const Icon(Icons.music_note, color: Colors.white24),
-                                ),
-                              ),
-                        title: Text(cancion['title'] ?? 'Sin título'),
-                        subtitle: Text(cancion['artist'] ?? 'Sin artista'),
-                        trailing: IconButton(
-                          icon: Icon(
-                            estaSeleccionada(cancion)
-                                ? Icons.check_circle
-                                : Icons.add_circle_outline,
+                return ListTile(
+                  leading: (cancion['image'] == null || cancion['image']!.isEmpty)
+                      ? Container(
+                          width: 50,
+                          height: 50,
+                          color: Colors.grey[800],
+                          child: const Icon(Icons.music_note, color: Colors.white24),
+                        )
+                      : Image.network(
+                          cancion['image']!,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            width: 50,
+                            height: 50,
+                            color: Colors.grey[800],
+                            child: const Icon(Icons.music_note, color: Colors.white24),
                           ),
-                          onPressed: () => toggleCancion(cancion),
                         ),
-                      );      
+                  title: Text(cancion['title'] ?? 'Sin título'),
+                  subtitle: Text(cancion['artist'] ?? 'Sin artista'),
+                  trailing: IconButton(
+                    icon: Icon(
+                      estaSeleccionada(cancion)
+                          ? Icons.check_circle
+                          : Icons.add_circle_outline,
+                      color: estaSeleccionada(cancion) ? Colors.green : null,
+                    ),
+                    onPressed: () {
+                      toggleCancion(cancion);
                     },
                   ),
+                );
+              },
+            ),
           ),
         ],
       ),

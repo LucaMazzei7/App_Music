@@ -102,10 +102,10 @@ class OpcionesCancion {
                           return ListTile(
                             title: Text(pl.nombre),
                             leading: Icon(Icons.music_note, color: Theme.of(context).colorScheme.primary),
-                            onTap: () {
+                            onTap: () async {
                               // 1. Guardamos el resultado de la operación (true o false)
-                              bool seAgrego = pProvider.addCancionAPlaylist(pl.id, cancion);
-                              
+                              bool seAgrego = await pProvider.addCancionAPlaylist(pl.id, cancion);
+                              if (!context.mounted) return;
                               Navigator.pop(context); // Cierra el sub-menú
 
                               if (seAgrego) {
