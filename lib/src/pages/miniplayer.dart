@@ -29,7 +29,14 @@ class MiniPlayer extends StatelessWidget {
 
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
-            child: Image.network(
+            child: (reproductor.imagenActual == null || reproductor.imagenActual!.isEmpty)
+                ? Container(
+                    width: 50,
+                    height: 50,
+                    color: Colors.grey[800],
+                    child: const Icon(Icons.music_note, color: Colors.white24),
+                  )
+            : Image.network(
               reproductor.imagenActual!,
               width: 50,
               height: 50,

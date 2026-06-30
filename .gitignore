@@ -3,3 +3,16 @@ build/
 android/.gradle/
 ios/Flutter/ephemeral/
 macos/Flutter/ephemeral/
+# Variables de entorno / secretos
+.env
+.env.*
+*.env
+*.local
+.secret.local
+
+# Firebase Admin / claves privadas
+serviceAccountKey.json
+firebase-adminsdk*.json
+*service-account*.json
+*.pem
+*.p12

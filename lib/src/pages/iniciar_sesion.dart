@@ -253,6 +253,7 @@ class IniciarSesion extends State<InicioSesion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: true,
         title: const Text(
           'Iniciar Sesion',
           style: TextStyle(
@@ -281,7 +282,7 @@ class IniciarSesion extends State<InicioSesion> {
   //Widget para generar un inputs para email
   Widget _crearEmail() {
     return TextField(
-      //keyboardType permite que en el teclado del dispositivo móvil se encuentre accesible el arroba (@) con el fin de escribir las direcciones de correo con mayor facilidad
+      controller: correoController,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         iconColor: Theme.of(context).colorScheme.primary,
@@ -297,7 +298,7 @@ class IniciarSesion extends State<InicioSesion> {
   //Widget para generar un inputs para password
   Widget _crearPassword() {
     return TextField(
-      //obscureText permite ocultar los caracteres que se ingresan en un input reemplazandolos por asteriscos
+      controller: contraController,
       obscureText: true,
       decoration: InputDecoration(
         iconColor: Theme.of(context).colorScheme.primary,
@@ -325,10 +326,23 @@ class IniciarSesion extends State<InicioSesion> {
   Widget _iniciarsesion() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, 'Navigator');
+        _verificar();
       },
       child: const Text('Iniciar Sesion', style: TextStyle(fontSize: 24)),
     );
+  }
+
+  Future<void> _verificar() async {
+    if (await AuthService().iniciarSesion(
+      correo: correoController.text,
+      contrasena: contraController.text,
+    )) {
+      Navigator.pushNamed(context, 'Navigator');
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Usuario o contraseña erroneo')));
+    }
   }
 }
 */

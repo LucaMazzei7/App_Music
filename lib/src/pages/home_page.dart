@@ -1,5 +1,6 @@
 // lib/src/pages/home_page.dart
 import 'dart:io';
+//import 'package:app_music/src/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/menu_provider.dart';
@@ -14,6 +15,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PlaylistProvider>().cargarPlaylists();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Escuchamos las playlists creadas
@@ -53,13 +62,28 @@ class _MyHomePageState extends State<HomePage> {
       actions: [
         IconButton(
           icon: const Icon(Icons.logout_outlined, size: 40),
-          onPressed: () {
-            Navigator.pop(context);
+          onPressed: () async {
+            try {
+              await AuthService().cerrarSesion();
+
+              if (!mounted) return;
+
+              Navigator.pushNamed(context, '/');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Sesion cerrada exitosamente')),
+              );
+            } catch (e) {
+              if (!mounted) return;
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error al cerrar sesión: $e')),
+              );
+            }
           },
         ),
       ],
       title: const Text(
-        'Home',
+        'Inicio',
         style: TextStyle(
           color: Colors.white,
           fontSize: 32,
@@ -197,12 +221,12 @@ borro estas dos que crean las opciones del menu favoritos o crear playlist ya qu
           return const Center(child: CircularProgressIndicator());
         }
 
-        // 2. Si ya hay datos, mapeamos la lista de una directamente
+        // Si ya hay datos, mapeamos la lista de una directamente
         if (snapshot.hasData) {
           return Column(children: _listaItems(snapshot.data));
         }
 
-        // 3. Si falló por alguna razón, mostramos el error
+        // Si falló por alguna razón, mostramos el error
         return Center(child: Text('Error al cargar el menú'));
       },
     );

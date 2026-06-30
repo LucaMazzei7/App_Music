@@ -112,14 +112,14 @@ class OpcionesCancion {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Añadida a "${pl.nombre}"'),
-                                    backgroundColor: const Color.fromARGB(255, 237, 221, 184), // fondo cremita de éxito
+                                    backgroundColor: const Color.fromARGB(255, 46, 125, 50), // Cambié a verde sutil para que combine con éxito
                                   ),
                                 );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('"${cancion['title']}" ya está añadida a esta playlist'),
-                                    backgroundColor: Colors.amber[800], // fondo naranja de advertencia
+                                    backgroundColor: Colors.amber[800], 
                                   ),
                                 );
                               }

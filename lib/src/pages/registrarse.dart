@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 
@@ -10,18 +11,17 @@ class RegistroSesion extends StatefulWidget {
 }
 
 class RegistrarSesion extends State<RegistroSesion> {
-  String _fecha = '';
-
   final TextEditingController usuario = TextEditingController();
   final TextEditingController correo = TextEditingController();
   final TextEditingController contra = TextEditingController();
   final TextEditingController fechaNac = TextEditingController();
   final TextEditingController generoController = TextEditingController();
+  String _fecha = '';
+
   final List<String> opcionesGenero = ['Masculino', 'Femenino', 'Otro'];
   String? generoSeleccionado;
   final TextEditingController _iniciarSesion = TextEditingController();
   DateTime? fechaNacimientoSeleccionada;
-
   @override
   void initState() {
     super.initState();
@@ -73,8 +73,8 @@ class RegistrarSesion extends State<RegistroSesion> {
 
   Widget _crearUsuario() {
     return TextField(
-      //keyboardType permite que en el teclado del dispositivo móvil se encuentre accesible el arroba (@) con el fin de escribir las direcciones de correo con mayor facilidad
       controller: usuario,
+      //keyboardType permite que en el teclado del dispositivo móvil se encuentre accesible el arroba (@) con el fin de escribir las direcciones de correo con mayor facilidad
       keyboardType: TextInputType.name,
       decoration: InputDecoration(
         iconColor: Theme.of(context).colorScheme.primary,
